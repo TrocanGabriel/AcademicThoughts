@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "155718782224",
+    "firebase_url": "https://academicthoughts-16a8f.firebaseio.com",
+    "project_id": "academicthoughts-16a8f",
+    "storage_bucket": "academicthoughts-16a8f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:155718782224:android:e3f54c15eb7faeb6",
+        "android_client_info": {
+          "package_name": "graduation.trocan.academicthoughts"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "155718782224-lptgb7gshakpmlth6cvc3mkimpebcf0o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "graduation.trocan.academicthoughts",
+            "certificate_hash": "01a945852dbb531611aba30bc8d37996471312cb"
+          }
+        },
+        {
+          "client_id": "155718782224-j08qr5bcr0jjdv7g6sf7jeh62bubcds4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOh5DBBeEGmQ_sHxKgkDUm1jBmhGq2tjY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "155718782224-j08qr5bcr0jjdv7g6sf7jeh62bubcds4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
