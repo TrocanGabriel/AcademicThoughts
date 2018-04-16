@@ -6,6 +6,21 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowTitleSize">0dp</item>
+
+    </style>
+
+    <!-- Style for a menu item that displays an option for the user  -->
+    <style name="MenuTab" parent="Widget.Design.TabLayout">
+        <item name="tabIndicatorColor">@android:color/white</item>
+        <item name="tabSelectedTextColor">@android:color/black</item>
+        <item name="tabTextAppearance">@style/MenuTabTextAppearance</item>
+    </style>
+
+    <!-- Text appearance style for a menu tab -->
+    <style name="MenuTabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:textColor">#A8A19E</item>
     </style>
 
 </resources>
