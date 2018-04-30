@@ -21,5 +21,9 @@
     <string name="logout_button">Logout</string>
     <string name="calendar">My courses: </string>
 
+    <!--News fragment-->
+    <string name="edit_news">Edit</string>
+    <string name="delete_news">Delete</string>
+
 </resources>
 

@@ -1,13 +1,25 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="graduation.trocan.academicthoughts.fragment.NewsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+    <!-- A RecyclerView with some commonly used attributes -->
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/news_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:scrollbars="vertical" />
 
-</FrameLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/add_news_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/news_recycler_view"
+        android:layout_alignParentEnd="true"
+        android:background="#002984"
+        android:src="@drawable/add_news_fab"
+        android:layout_margin="16dp" />
+</RelativeLayout>
