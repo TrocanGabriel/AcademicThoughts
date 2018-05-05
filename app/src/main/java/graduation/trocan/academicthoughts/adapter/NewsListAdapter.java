@@ -3,6 +3,7 @@ package graduation.trocan.academicthoughts.adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -15,13 +16,16 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.Date;
 import java.util.List;
 
 import graduation.trocan.academicthoughts.R;
@@ -34,7 +38,9 @@ import graduation.trocan.academicthoughts.model.News;
 public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHolder> {
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private List<News> newsList;
+     String role = "";
 
 
     public class ViewHolder extends RecyclerView.ViewHolder  {
@@ -74,9 +80,26 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
         holder.imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View itemView) {
-                PopupMenu popup = new PopupMenu(itemView.getContext(), itemView);
-                MenuInflater inflater = popup.getMenuInflater();
-                inflater.inflate(R.menu.news_menu, popup.getMenu());
+                final PopupMenu popup = new PopupMenu(itemView.getContext(), itemView);
+                FirebaseUser currentUser = mAuth.getCurrentUser();
+
+                final MenuInflater inflater = popup.getMenuInflater();
+                db.collection("roles").document(currentUser.getEmail())
+                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        role= documentSnapshot.getString("role");
+
+                    }
+                });
+
+                Log.d("NewsListAd", role);
+                if(role.equals("student"))
+                inflater.inflate(R.menu.news_menu_stud, popup.getMenu());
+                else
+                    inflater.inflate(R.menu.news_menu, popup.getMenu());
+
+
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
@@ -142,6 +165,31 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
                                 // show it
                                 alertDialog.show();
                             break;
+
+                            case R.id.email_news_author:
+
+                                final Context finalContext;
+                                finalContext = itemView.getContext();
+                                db.collection("news").document(currentDoc)
+                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        News news = documentSnapshot.toObject(News.class);
+                                        String author_email = news.getAuthor();
+                                        Intent i = new Intent(Intent.ACTION_SEND);
+                                        i.setType("message/rfc822");
+                                        i.putExtra(Intent.EXTRA_EMAIL  , new String[]{author_email});
+                                        i.putExtra(Intent.EXTRA_SUBJECT, "Insert subject");
+                                        i.putExtra(Intent.EXTRA_TEXT   , " S");
+                                        try {
+                                            itemView.getContext().startActivity(Intent.createChooser(i, "Send mail..."));
+                                        } catch (android.content.ActivityNotFoundException ex) {
+                                            Toast.makeText(finalContext, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+
+
                         }
 
                         return false;

@@ -1,7 +1,5 @@
 package graduation.trocan.academicthoughts.model;
 
-import com.google.firebase.firestore.ServerTimestamp;
-
 import java.util.Date;
 
 /**
@@ -13,6 +11,7 @@ public class News {
     private Date date;
     private String text;
     private String uid;
+    private String author;
 
     public News(){ }
 
@@ -39,4 +38,8 @@ public class News {
     public String getUid() {return uid;}
 
     public void setUid(String uid) {this.uid = uid;}
+
+    public String getAuthor() { return author; }
+
+    public void setAuthor(String author) { this.author = author; }
 }

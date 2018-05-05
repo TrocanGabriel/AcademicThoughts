@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/edit_news"
-        android:title="@string/edit_news"
-        />
-    <item android:id="@+id/delete_news"
-        android:title="@string/delete_news"
-        />
     <item android:id="@+id/email_news_author"
         android:title="@string/email_news_author" />
-
 </menu>
