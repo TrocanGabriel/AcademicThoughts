@@ -69,9 +69,8 @@ public class NewsFragment extends Fragment {
         retrieveNews();
 
         final FloatingActionButton floatingActionButton = view.findViewById(R.id.add_news_button);
-        FirebaseUser user = mAuth.getCurrentUser();
-        final String[] userRole = new String[1];
-        db.collection("roles").document(user.getEmail())
+        final FirebaseUser currentUser = mAuth.getCurrentUser();
+        db.collection("roles").document(currentUser.getEmail())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -82,7 +81,7 @@ public class NewsFragment extends Fragment {
                               if(document.getString("role").equals("student")) {
                                   floatingActionButton.setVisibility(View.GONE);
                               }
-                                Log.d(TAG, document.getString("role") + " No such document " + userRole[0]);
+                                Log.d(TAG, document.getString("role") + "role " );
                             } else {
                                 Log.d(TAG, "No such document");
                             }
@@ -91,7 +90,6 @@ public class NewsFragment extends Fragment {
                         }
                     }
                 });
-        Log.d(TAG,"HERE " + userRole[0]);
             if(floatingActionButton.getVisibility() != View.GONE) {
 
 
@@ -117,6 +115,7 @@ public class NewsFragment extends Fragment {
                                                     News news = new News(date, newData);
                                                     DocumentReference newsRef = db.collection("news").document();
                                                     news.setUid(newsRef.getId());
+                                                    news.setAuthor(currentUser.getEmail());
                                                     newsRef.set(news);
                                                     mAdapter.clear();
                                                     retrieveNews();
@@ -177,7 +176,7 @@ public class NewsFragment extends Fragment {
 
                     Log.d(TAG, "Error on retrieving news list");
 
-                    }
+                }
             }
         });
 

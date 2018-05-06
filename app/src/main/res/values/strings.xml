@@ -26,5 +26,10 @@
     <string name="delete_news">Delete</string>
     <string name="email_news_author">Email Author</string>
 
+
+    <!--Professor Fragment-->
+    <string name="give_mark">Give mark</string>
+    <string name="email_student">Send email</string>
+
 </resources>
 

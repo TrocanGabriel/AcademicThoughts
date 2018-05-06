@@ -7,7 +7,6 @@
     <item android:id="@+id/delete_news"
         android:title="@string/delete_news"
         />
-    <item android:id="@+id/email_news_author"
-        android:title="@string/email_news_author" />
+  
 
 </menu>

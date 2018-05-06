@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/give_mark"
+        android:title="@string/give_mark" />
+
+    <item android:id="@+id/email_student"
+        android:title="@string/email_student" />
+
+
+</menu>

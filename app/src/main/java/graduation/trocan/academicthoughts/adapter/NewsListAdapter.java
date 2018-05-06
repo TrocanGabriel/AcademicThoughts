@@ -89,12 +89,12 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         role= documentSnapshot.getString("role");
+                        Log.d("NewsListAd", role);
 
                     }
                 });
 
-                Log.d("NewsListAd", role);
-                if(role.equals("student"))
+                if(role.equals("student") || !modifiedNews.getAuthor().equals(currentUser.getEmail()))
                 inflater.inflate(R.menu.news_menu_stud, popup.getMenu());
                 else
                     inflater.inflate(R.menu.news_menu, popup.getMenu());
@@ -127,7 +127,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
 
                                 break;
                             case R.id.edit_news:
-                                //handle menu2 click
+
                                 Context context = itemView.getContext();
                                 LayoutInflater layoutInflater = LayoutInflater.from(context);
                                 final View promptView = layoutInflater.inflate(R.layout.edit_news_prompt, null);
@@ -147,7 +147,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
                                                             newsRef.update("text",newData);
                                                             newsList.get(newsList.indexOf(modifiedNews)).setText(newData);
                                                             notifyDataSetChanged();
-                                                            db.collection("student").document("");
+
                                                         }
 
                                                     }
@@ -188,7 +188,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
                                         }
                                     }
                                 });
-
+                                break;
 
                         }
 

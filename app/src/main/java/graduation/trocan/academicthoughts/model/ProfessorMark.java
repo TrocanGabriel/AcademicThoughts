@@ -1,23 +1,30 @@
 package graduation.trocan.academicthoughts.model;
 
-public class Student {
+public class ProfessorMark {
 
+    private String course;
     private String email;
     private String first_name;
     private String last_name;
+    private String group;
     private int mark;
 
-    public Student(String email, String first_name, String last_name, int mark) {
+    public ProfessorMark( ) {
+    }
+
+    public ProfessorMark(String course, String email, String first_name, String last_name, String group, int mark) {
         this.email = email;
         this.first_name = first_name;
         this.last_name = last_name;
         this.mark = mark;
+        this.group = group;
     }
 
-    public Student(String email, String first_name, String last_name) {
+    public ProfessorMark(String course, String email, String first_name, String last_name, String group) {
         this.email = email;
         this.first_name = first_name;
         this.last_name = last_name;
+        this.group = group;
     }
 
     public String getEmail() {
@@ -51,4 +58,12 @@ public class Student {
     public void setMark(int mark) {
         this.mark = mark;
     }
+
+    public String getGroup() {return group;}
+
+    public void setGroup(String group) {this.group = group;}
+
+    public String getCourse() {return course;}
+
+    public void setCourse(String course) {this.course = course;}
 }
