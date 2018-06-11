@@ -12,14 +12,23 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
-    <string name="menu_profile">Profile</string>
+    <string name="menu_agenda">Agenda</string>
     <string name="menu_news">News</string>
-    <string name="menu_student">Student</string>
-    <string name="menu_professor">Professor</string>
+    <string name="menu_grades">Grades</string>
 
-    <!--Profile fragment-->
+    <!--Agenda fragment-->
     <string name="logout_button">Logout</string>
-    <string name="calendar">My courses: </string>
+    <string name="calendar">My day: </string>
+    <string name="exams_list">My exams: </string>
+
+    <string-array name="days_array">
+        <item>Luni</item>
+        <item>Marti</item>
+        <item>Miercuri</item>
+        <item>Joi</item>
+        <item>Vineri</item>
+    </string-array>
+
 
     <!--News fragment-->
     <string name="edit_news">Edit</string>
@@ -30,6 +39,13 @@
     <!--Professor Fragment-->
     <string name="give_mark">Give mark</string>
     <string name="email_student">Send email</string>
+
+    <string name="searchByCourse">Course</string>
+    <string name="searchByGroup">Group</string>
+    <string name="searchByLastName">Last Name</string>
+    <string name="searchByFirstName">First Name</string>
+    <!-- Student Fragment-->
+    <string name="email_professor"> Email Professor</string>
 
 </resources>
 

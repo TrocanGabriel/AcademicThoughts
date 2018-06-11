@@ -3,45 +3,32 @@ package graduation.trocan.academicthoughts.fragment;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.net.Uri;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageButton;
 
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.ServerTimestamp;
+import com.google.gson.Gson;
 
-import java.io.Console;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -56,10 +43,13 @@ public class NewsFragment extends Fragment {
     private List<News> newsList = new ArrayList<>();
     private RecyclerView recyclerView;
     private NewsListAdapter mAdapter;
-    Context context;
+    Context context = getActivity();
     public static final String TAG = "NewsFragment";
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+    public static final String PREFS_NAME = "NEWS_FRAGMENT";
+    public static final String FAVORITES = "Students_list";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -78,8 +68,14 @@ public class NewsFragment extends Fragment {
                         if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
                             if (document.exists()) {
+                                Context context = getActivity();
                               if(document.getString("role").equals("student")) {
                                   floatingActionButton.setVisibility(View.GONE);
+                                  saveFavorites(context, "student");
+                              }
+                              else {
+                                  saveFavorites(context, "professor");
+
                               }
                                 Log.d(TAG, document.getString("role") + "role " );
                             } else {
@@ -153,7 +149,11 @@ public class NewsFragment extends Fragment {
 
 
     private void retrieveNews(){
-  db.collection("news")
+
+        final FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        db.collection("news")
+
         .orderBy("date", Query.Direction.DESCENDING)
         .get()
         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -163,9 +163,19 @@ public class NewsFragment extends Fragment {
                     newsList = new ArrayList<>();
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         News newAdded = document.toObject(News.class);
+                        Context context = getActivity();
+                        String role = getFavorites(context);
+                        if(newAdded.getAuthor().equals(currentUser.getEmail())
+                             //   && role.equals("professor")
+                                ){
                         newAdded.setUid(document.getId());
                         Log.d(TAG, "UID : " + newAdded.getUid());
-                        newsList.add(newAdded);
+                        newsList.add(newAdded);}
+//                        else if(role.equals("student"))  {
+//                            newAdded.setUid(document.getId());
+//                            Log.d(TAG, "UID : " + newAdded.getUid());
+//                            newsList.add(newAdded);
+//                        }
                     }
                         mAdapter = new NewsListAdapter(newsList);
                     RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
@@ -180,6 +190,41 @@ public class NewsFragment extends Fragment {
             }
         });
 
+    }
+
+    public void saveFavorites(Context context,String role) {
+        SharedPreferences settings;
+        SharedPreferences.Editor editor;
+
+        settings = context.getSharedPreferences(PREFS_NAME,
+                Context.MODE_PRIVATE);
+        editor = settings.edit();
+
+        Gson gson = new Gson();
+        String jsonFavorites = gson.toJson(role);
+
+        editor.putString(FAVORITES, jsonFavorites);
+
+        editor.apply();
+    }
+
+    public String getFavorites(Context context) {
+        SharedPreferences settings;
+       String favorites;
+
+        settings = context.getSharedPreferences(PREFS_NAME,
+                Context.MODE_PRIVATE);
+
+        if (settings.contains(FAVORITES)) {
+            String jsonFavorites = settings.getString(FAVORITES, null);
+            Gson gson = new Gson();
+            favorites = gson.fromJson(jsonFavorites,
+                    String.class);
+
+
+        } else
+            return null;
+        return  favorites;
     }
 
 

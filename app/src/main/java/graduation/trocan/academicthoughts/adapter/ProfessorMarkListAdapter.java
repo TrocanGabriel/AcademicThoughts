@@ -3,6 +3,7 @@ package graduation.trocan.academicthoughts.adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -15,12 +16,15 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -68,7 +72,7 @@ public class ProfessorMarkListAdapter extends RecyclerView.Adapter<ProfessorMark
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.professor_mark_layout, parent, false);
+                .inflate(R.layout.professor_mark_item_layout, parent, false);
 
         return new ViewHolder(itemView);
     }
@@ -76,7 +80,7 @@ public class ProfessorMarkListAdapter extends RecyclerView.Adapter<ProfessorMark
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        ProfessorMark professorMark = professorMarkList.get(position);
+        final ProfessorMark professorMark = professorMarkList.get(position);
         String studentName = professorMark.getLast_name() + " " + professorMark.getFirst_name();
         holder.mNameView.setText(studentName);
         holder.mMarkView.setText(Integer.toString(professorMark.getMark()));
@@ -94,7 +98,7 @@ public class ProfessorMarkListAdapter extends RecyclerView.Adapter<ProfessorMark
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        String student = modifiedData.getEmail();
+                        String studentEmail = modifiedData.getEmail();
 
                         switch (item.getItemId()) {
                             case R.id.give_mark:
@@ -167,6 +171,32 @@ public class ProfessorMarkListAdapter extends RecyclerView.Adapter<ProfessorMark
                                 break;
 
                             case R.id.email_student:
+
+                                final Context finalContext;
+                                finalContext = itemView.getContext();
+                                db.collection("professors")
+                                        .document(currentUser.getEmail())
+                                        .collection("myStudents")
+                                        .document(modifiedData.getEmail())
+                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                                         ProfessorMark professorMark = documentSnapshot.toObject(ProfessorMark.class);
+                                        String student_email = professorMark.getEmail();
+                                        Intent i = new Intent(Intent.ACTION_SEND);
+                                        i.setType("message/rfc822");
+                                        i.putExtra(Intent.EXTRA_EMAIL  , new String[]{student_email});
+                                        i.putExtra(Intent.EXTRA_SUBJECT, "Insert subject");
+                                        i.putExtra(Intent.EXTRA_TEXT   , " S");
+                                        try {
+                                            itemView.getContext().startActivity(Intent.createChooser(i, "Send mail..."));
+                                        } catch (android.content.ActivityNotFoundException ex) {
+                                            Toast.makeText(finalContext, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+
                                 break;
 
                         }

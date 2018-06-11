@@ -14,13 +14,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import graduation.trocan.academicthoughts.R;
 import graduation.trocan.academicthoughts.fragment.NewsFragment;
 import graduation.trocan.academicthoughts.fragment.ProfessorFragment;
-import graduation.trocan.academicthoughts.fragment.ProfileFragment;
+import graduation.trocan.academicthoughts.fragment.AgendaFragment;
 import graduation.trocan.academicthoughts.fragment.StudentFragment;
 
 /**
@@ -29,7 +26,7 @@ import graduation.trocan.academicthoughts.fragment.StudentFragment;
 
 public class MenuAdapter  extends FragmentPagerAdapter {
 
-    public static final String TAG =  "MenuAdapter";
+    public static final String TAG = "MenuAdapter";
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private Context mContext;
@@ -48,7 +45,7 @@ public class MenuAdapter  extends FragmentPagerAdapter {
 
         db.collection("roles").document(userEmail)
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>(){
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
 
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -57,7 +54,7 @@ public class MenuAdapter  extends FragmentPagerAdapter {
                             if (document.exists()) {
                                 roles = (document.getString("role"));
                             } else {
-                                Log.d(TAG , "No such document");
+                                Log.d(TAG, "No such document");
                             }
                         } else {
                             Log.d(TAG, "get failed with ", task.getException());
@@ -66,16 +63,17 @@ public class MenuAdapter  extends FragmentPagerAdapter {
 
                 });
         if (position == 0) {
-            return new ProfileFragment();
+            return new AgendaFragment();
         } else if (position == 1) {
             return new NewsFragment();
-        } else if(roles.equals("student") && position == 2) {
+        } else if (roles.equals("student") && position == 2) {
             return new StudentFragment();
-        }
-        else {
+        } else if (roles.equals("professor") && position == 2) {
             return new ProfessorFragment();
         }
-    }
+
+    return null;
+}
 
     @Override
     public int getCount() {
@@ -85,16 +83,13 @@ public class MenuAdapter  extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         if (position == 0) {
-            return mContext.getString(R.string.menu_profile);
+            return mContext.getString(R.string.menu_agenda);
         } else if (position == 1) {
             return mContext.getString(R.string.menu_news);
-        } else if(roles.equals("student") && position == 2) {
-            return mContext.getString(R.string.menu_student);
-        }
-        else {
-            return mContext.getString(R.string.menu_professor);
-
+        } else  {
+            return mContext.getString(R.string.menu_grades);
         }
 
     }
+
 }

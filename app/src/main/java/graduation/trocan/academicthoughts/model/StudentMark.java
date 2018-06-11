@@ -11,6 +11,8 @@ public class StudentMark {
         this.mark = mark;
     }
 
+    public StudentMark () {}
+
     public String getProfessor() {
         return professor;
     }
