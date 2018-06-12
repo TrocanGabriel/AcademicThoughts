@@ -27,15 +27,17 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import graduation.trocan.academicthoughts.LoginActivity;
 import graduation.trocan.academicthoughts.R;
 import graduation.trocan.academicthoughts.adapter.AgendaExamListAdapter;
-import graduation.trocan.academicthoughts.adapter.CalendarListAdapter;
+import graduation.trocan.academicthoughts.adapter.SchoolCalendarListAdapter;
 import graduation.trocan.academicthoughts.model.AgendaExam;
-import graduation.trocan.academicthoughts.model.Calendar;
+import graduation.trocan.academicthoughts.model.SchoolCalendar;
 
 
 public class AgendaFragment extends Fragment {
@@ -43,17 +45,17 @@ public class AgendaFragment extends Fragment {
 
     private static final String TAG = "AGENDA";
 
-    private List<Calendar> calendarArrayList = new ArrayList<>();
+    private List<SchoolCalendar> SchoolCalendarArrayList = new ArrayList<>();
     private List<AgendaExam> agendaExamList = new ArrayList<>();
     private Button  logoutButton;
     private Spinner spinner;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private CalendarListAdapter mCalendarAdapter;
+    private SchoolCalendarListAdapter mSchoolCalendarAdapter;
     private AgendaExamListAdapter mAgendaExamAdapter;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     final FirebaseUser currentUser = mAuth.getCurrentUser();
 
-    private RecyclerView calendarRecyclerView;
+    private RecyclerView SchoolCalendarRecyclerView;
     private RecyclerView examsRecyclerView;
     private String studentUser;
     private String studentUserGroup;
@@ -66,7 +68,7 @@ public class AgendaFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_agenda, container, false);
-        calendarRecyclerView = view.findViewById(R.id.calendar_recycler_view);
+        SchoolCalendarRecyclerView = view.findViewById(R.id.calendar_recycler_view);
         examsRecyclerView = view.findViewById(R.id.exams_recycler_view);
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -76,14 +78,41 @@ public class AgendaFragment extends Fragment {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.days_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
         spinner.setAdapter(adapter);
+
+        //TODO: SET TIME;
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
+        Date d = new Date();
+        String dayOfTheWeek = sdf.format(d);
+        Log.d(TAG, dayOfTheWeek);
+        switch (dayOfTheWeek){
+            case "Monday":
+                spinner.setSelection(1);
+                break;
+            case "Tuesday":
+                spinner.setSelection(2);
+                break;
+            case "Wednesday":
+                spinner.setSelection(3);
+                break;
+            case "Thursday":
+                spinner.setSelection(4);
+                break;
+            case "Friday":
+                spinner.setSelection(5);
+                break;
+
+        }
+
+
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String day =  adapterView.getItemAtPosition(i).toString();
                 Log.d(TAG, "day " + day);
-                getCalendar(day);
+                getSchoolCalendar(day);
             }
 
             @Override
@@ -117,6 +146,7 @@ public class AgendaFragment extends Fragment {
         SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
         String role = sharedPref.getString("role","");
         final String studentUser = sharedPref.getString("studentUserGroup", "");
+        Log.d(TAG, " ROLE EXAM " + role);
 
         if(role.equals("professor")){
             Log.d(TAG, "PROFESSOR ROLE EXAM");
@@ -153,12 +183,14 @@ public class AgendaFragment extends Fragment {
                                 agendaExamList = new ArrayList<>();
                                 for(QueryDocumentSnapshot queryDocumentSnapshot :task.getResult()){
                                     AgendaExam exam = queryDocumentSnapshot.toObject(AgendaExam.class);
-                                    Log.d(TAG, "PROFESSOR ROLE EXAM email " + studentUser);
-                                    Log.d(TAG, "PROFESSOR ROLE EXAM course " + exam.getGroups());
+                                    Log.d(TAG, "STUDENT ROLE EXAM email " + studentUser);
                                     if(exam.getGroups().contains(studentUser)) {
                                         agendaExamList.add(exam);
+
                                     }
                                 }
+
+                                Log.d(TAG, "STUDENT ROLE EXAM LIST " + agendaExamList);
 
                                 mAgendaExamAdapter = new AgendaExamListAdapter(agendaExamList);
                                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
@@ -170,13 +202,13 @@ public class AgendaFragment extends Fragment {
                     });
         }
     }
-    private void getCalendar(String day) {
+    private void getSchoolCalendar(String day) {
         getUserRole();
         SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
         String role = sharedPref.getString("role","");
         final String studentUser = sharedPref.getString("studentUserGroup", "");
         if(role.equals("professor")) {
-            Log.d(TAG, "PROFESSOR ROLE CALENDAR");
+            Log.d(TAG, "PROFESSOR ROLE SchoolCalendar");
             db.collection("calendar")
                     .whereEqualTo("day", day)
                     .get()
@@ -184,30 +216,30 @@ public class AgendaFragment extends Fragment {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
-                                calendarArrayList = new ArrayList<>();
+                                SchoolCalendarArrayList = new ArrayList<>();
                                 for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
-                                    Calendar newData = queryDocumentSnapshot.toObject(Calendar.class);
-                                    Log.d(TAG, "PROFESSOR ROLE CALENDAR email " + currentUser.getEmail());
-                                    Log.d(TAG, "PROFESSOR ROLE CALENDAR course " + newData.getTitle());
+                                    SchoolCalendar newData = queryDocumentSnapshot.toObject(SchoolCalendar.class);
+                                    Log.d(TAG, "PROFESSOR ROLE SchoolCalendar email " + currentUser.getEmail());
+                                    Log.d(TAG, "PROFESSOR ROLE SchoolCalendar course " + newData.getTitle());
 
 
                                     if(newData.getProfessor().equals(currentUser.getEmail())) {
-                                        calendarArrayList.add(newData);
+                                        SchoolCalendarArrayList.add(newData);
                                     }
                                 }
 
-                                mCalendarAdapter = new CalendarListAdapter(calendarArrayList);
+                                mSchoolCalendarAdapter = new SchoolCalendarListAdapter(SchoolCalendarArrayList);
                                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-                                calendarRecyclerView.setLayoutManager(mLayoutManager);
-                                calendarRecyclerView.setItemAnimator(new DefaultItemAnimator());
-                                calendarRecyclerView.setAdapter(mCalendarAdapter);
+                                SchoolCalendarRecyclerView.setLayoutManager(mLayoutManager);
+                                SchoolCalendarRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                                SchoolCalendarRecyclerView.setAdapter(mSchoolCalendarAdapter);
                             } else {
-                                Log.d(TAG, " Calendar spinner failed!");
+                                Log.d(TAG, " SchoolCalendar spinner failed!");
                             }
                         }
                     });
         } else if(role.equals("student")) {
-            Log.d(TAG, "STUDENT ROLE CALENDAR");
+            Log.d(TAG, "STUDENT ROLE SchoolCalendar");
 
 
             db.collection("calendar")
@@ -217,25 +249,25 @@ public class AgendaFragment extends Fragment {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
-                                calendarArrayList = new ArrayList<>();
+                                SchoolCalendarArrayList = new ArrayList<>();
                                 for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
-                                    Calendar newData = queryDocumentSnapshot.toObject(Calendar.class);
-                                    Log.d(TAG,  studentUserGroup + " PROFESSOR ROLE CALENDAR course " + newData.getGroups());
+                                    SchoolCalendar newData = queryDocumentSnapshot.toObject(SchoolCalendar.class);
+                                    Log.d(TAG,  studentUserGroup + " PROFESSOR ROLE SchoolCalendar course " + newData.getGroups());
 
                                     if(newData.getGroups().contains(studentUser)) {
-                                        Log.d(TAG, "PROFESSOR ROLE CALENDAR email " + currentUser.getEmail());
+                                        Log.d(TAG, "PROFESSOR ROLE SchoolCalendar email " + currentUser.getEmail());
 
-                                        calendarArrayList.add(newData);
+                                        SchoolCalendarArrayList.add(newData);
                                     }
                                 }
 
-                                mCalendarAdapter = new CalendarListAdapter(calendarArrayList);
+                                mSchoolCalendarAdapter = new SchoolCalendarListAdapter(SchoolCalendarArrayList);
                                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-                                calendarRecyclerView.setLayoutManager(mLayoutManager);
-                                calendarRecyclerView.setItemAnimator(new DefaultItemAnimator());
-                                calendarRecyclerView.setAdapter(mCalendarAdapter);
+                                SchoolCalendarRecyclerView.setLayoutManager(mLayoutManager);
+                                SchoolCalendarRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                                SchoolCalendarRecyclerView.setAdapter(mSchoolCalendarAdapter);
                             } else {
-                                Log.d(TAG, " Calendar spinner failed!");
+                                Log.d(TAG, " SchoolCalendar spinner failed!");
                             }
                         }
                     });

@@ -2,7 +2,7 @@ package graduation.trocan.academicthoughts.model;
 
 import java.util.ArrayList;
 
-public class Calendar {
+public class SchoolCalendar {
 
     private ArrayList<String> groups;
     private String day;
@@ -13,10 +13,10 @@ public class Calendar {
     private String week;
     private String professor;
 
-    public Calendar(){
+    public SchoolCalendar(){
 
     }
-    public Calendar(ArrayList<String> groups, String day, String hours, String semigroup, String title, String type, String week,  String professor) {
+    public SchoolCalendar(ArrayList<String> groups, String day, String hours, String semigroup, String title, String type, String week,  String professor) {
         this.groups = groups;
         this.day = day;
         this.hours = hours;
@@ -27,7 +27,7 @@ public class Calendar {
         this.professor = professor;
     }
 
-    public Calendar(ArrayList<String> groups, String day, String hours, String title, String type, String professor) {
+    public SchoolCalendar(ArrayList<String> groups, String day, String hours, String title, String type, String professor) {
         this.groups = groups;
         this.day = day;
         this.hours = hours;
@@ -44,9 +44,9 @@ public class Calendar {
     public void setGroups(ArrayList<String> groups) {
         this.groups = groups;
     }
-    public String showGroups(Calendar calendar){
+    public String showGroups(SchoolCalendar SchoolCalendar){
         StringBuilder showGroups = new StringBuilder();
-        for (String group: calendar.getGroups()
+        for (String group: SchoolCalendar.getGroups()
              ) {
             showGroups.append(group + " ");
         }

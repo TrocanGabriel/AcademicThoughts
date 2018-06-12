@@ -12,13 +12,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.List;
 
 import graduation.trocan.academicthoughts.R;
-import graduation.trocan.academicthoughts.model.Calendar;
+import graduation.trocan.academicthoughts.model.SchoolCalendar;
 
-public class CalendarListAdapter extends RecyclerView.Adapter<CalendarListAdapter.ViewHolder> {
+public class SchoolCalendarListAdapter extends RecyclerView.Adapter<SchoolCalendarListAdapter.ViewHolder> {
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private List<Calendar> calendarList;
+    private List<SchoolCalendar> calendarList;
     String role = "";
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -40,7 +40,7 @@ public class CalendarListAdapter extends RecyclerView.Adapter<CalendarListAdapte
 
     }
 
-    public CalendarListAdapter(List<Calendar> calendarList) {
+    public SchoolCalendarListAdapter(List<SchoolCalendar> calendarList) {
         this.calendarList = calendarList;
     }
 
@@ -55,14 +55,14 @@ public class CalendarListAdapter extends RecyclerView.Adapter<CalendarListAdapte
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        Calendar calendar = calendarList.get(position);
+        SchoolCalendar calendar = calendarList.get(position);
         holder.mTitleView.setText(calendar.getTitle());
         holder.mTypeView.setText(calendar.getType());
         String hours = "Intre orele: " + calendar.getHours();
         holder.mHoursView.setText(hours);
         String groups = "Grupe: " + calendar.getHours();
         holder.mGroupsView.setText(groups);
-        final Calendar selectedCourse = calendarList.get(position);
+        final SchoolCalendar selectedCourse = calendarList.get(position);
 
     }
 

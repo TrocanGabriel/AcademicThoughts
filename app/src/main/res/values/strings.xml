@@ -20,6 +20,8 @@
     <string name="logout_button">Logout</string>
     <string name="calendar">My day: </string>
     <string name="exams_list">My exams: </string>
+    <string name="modify_exam_date">Modify date</string>
+    <string name="check_exams_button">Check exams</string>
 
     <string-array name="days_array">
         <item>Luni</item>

@@ -45,10 +45,6 @@ public class AgendaExamListAdapter extends RecyclerView.Adapter<AgendaExamListAd
             mTitleView = itemView.findViewById(R.id.exam_title_show);
             mDateView = itemView.findViewById(R.id.exam_date_show);
             imageButton = itemView.findViewById(R.id.exam_menu_button);
-           FirebaseUser user = mAuth.getCurrentUser();
-            if(user.getEmail().equals("gabrieltrocan93@gmail.com")) {
-                imageButton.setVisibility(View.INVISIBLE);
-            }
         }
     }
 
@@ -68,7 +64,14 @@ public class AgendaExamListAdapter extends RecyclerView.Adapter<AgendaExamListAd
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         AgendaExam agendaExam = agendaExamList.get(position);
-        holder.mTitleView.setText(agendaExam.getCourse());
+        getRole();
+        if(role.equals("student")){
+            String title = agendaExam.getCourse() + ": " + agendaExam.getProfessor();
+            holder.mTitleView.setText(title);
+
+        } else {
+            holder.mTitleView.setText(agendaExam.getCourse());
+        }
         holder.mDateView.setText((agendaExam.getDate().toString()));
         final AgendaExam selectedExam = agendaExamList.get(position);
         holder.imageButton.setOnClickListener(new View.OnClickListener() {
@@ -79,7 +82,10 @@ public class AgendaExamListAdapter extends RecyclerView.Adapter<AgendaExamListAd
 
                 final MenuInflater inflater = popup.getMenuInflater();
                 getRole();
-                inflater.inflate(R.menu.agenda_exam_menu, popup.getMenu());
+                if(role.equals("student"))
+                    inflater.inflate(R.menu.agenda_exam_menu, popup.getMenu());
+                else
+                    inflater.inflate(R.menu.prof_exam_menu, popup.getMenu());
 
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
@@ -125,7 +131,7 @@ public class AgendaExamListAdapter extends RecyclerView.Adapter<AgendaExamListAd
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 role= documentSnapshot.getString("role");
-                Log.d("NewsListAd", role);
+                Log.d("AgendaLists", role);
 
             }
         });

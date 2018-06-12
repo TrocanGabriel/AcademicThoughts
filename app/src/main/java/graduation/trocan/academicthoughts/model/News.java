@@ -37,6 +37,7 @@ public class News {
 
 
 
+
     public Date getDate() {return date;}
 
     public String getText() {return text;}
