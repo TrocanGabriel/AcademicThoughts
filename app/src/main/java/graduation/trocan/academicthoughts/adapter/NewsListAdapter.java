@@ -96,12 +96,12 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
         holder.mDateView.setText((news.getDate().toString()));
         final News modifiedNews = newsList.get(position);
 
-        holder.setItemLongClickListener(new OnItemLongClickListener() {
-            @Override
-            public void onItemLongClick(View v, int pos) {
-
-            }
-        });
+//        holder.setItemLongClickListener(new OnItemLongClickListener() {
+//            @Override
+//            public void onItemLongClick(View v, int pos) {
+//
+//            }
+//        });
 
 
         holder.imageButton.setOnClickListener(new View.OnClickListener() {
