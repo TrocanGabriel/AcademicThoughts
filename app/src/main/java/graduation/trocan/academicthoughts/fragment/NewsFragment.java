@@ -152,6 +152,8 @@ public class NewsFragment extends Fragment {
 
                                                     mAdapter.clear();
                                                     retrieveNews();
+
+
                                                 }
 
                                             }
@@ -338,22 +340,7 @@ public class NewsFragment extends Fragment {
         });
     }
 
-//
-//    public void saveStudentGroup(Context context,String group) {
-//        SharedPreferences settings;
-//        SharedPreferences.Editor editor;
-//
-//        settings = context.getSharedPreferences(PREFS_NAME,
-//                Context.MODE_PRIVATE);
-//        editor = settings.edit();
-//
-//        Gson gson = new Gson();
-//        String jsonFavorites = gson.toJson(group);
-//
-//        editor.putString(FAVORITES, jsonFavorites);
-//
-//        editor.apply();
-//    }
+
 
 
 }

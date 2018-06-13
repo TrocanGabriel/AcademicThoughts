@@ -42,12 +42,17 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
     private List<News> newsList;
      String role = "";
 
+    public interface OnItemLongClickListener {
+       void onItemLongClick(View v,int position);
+    }
 
-    public class ViewHolder extends RecyclerView.ViewHolder  {
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
 
         public TextView mTextView;
         public TextView mDateView;
         public ImageButton imageButton;
+        OnItemLongClickListener itemLongClickListener;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -55,6 +60,19 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
             mDateView = itemView.findViewById(R.id.news_date_show);
             imageButton = itemView.findViewById(R.id.menu_button);
 
+            itemView.setOnLongClickListener(this);
+
+        }
+
+        public void setItemLongClickListener(OnItemLongClickListener ic)
+        {
+            this.itemLongClickListener=ic;
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            this.itemLongClickListener.onItemLongClick(v,getLayoutPosition());
+            return false;
         }
     }
 
@@ -77,6 +95,15 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
         holder.mTextView.setText(news.getText());
         holder.mDateView.setText((news.getDate().toString()));
         final News modifiedNews = newsList.get(position);
+
+        holder.setItemLongClickListener(new OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(View v, int pos) {
+
+            }
+        });
+
+
         holder.imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View itemView) {
@@ -200,6 +227,8 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
                 popup.show();
             }
         });
+
+
 
     }
 

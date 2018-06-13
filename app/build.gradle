@@ -55,7 +55,9 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-storage:3.2.2'
     //gson for SP
     compile 'com.google.code.gson:gson:2.8.2'
-
+    //notifications
+    implementation "com.android.support:support-compat:26.1.0"
+    implementation 'com.google.firebase:firebase-messaging:17.0.0'
 
 }
 
