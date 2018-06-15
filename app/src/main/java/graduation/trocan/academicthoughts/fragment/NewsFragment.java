@@ -3,6 +3,7 @@ package graduation.trocan.academicthoughts.fragment;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -37,7 +38,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import graduation.trocan.academicthoughts.NewsChatActivity;
 import graduation.trocan.academicthoughts.R;
+import graduation.trocan.academicthoughts.Service.NotificationService;
 import graduation.trocan.academicthoughts.adapter.NewsListAdapter;
 import graduation.trocan.academicthoughts.adapter.TargetGroupsForNewsListAdapter;
 import graduation.trocan.academicthoughts.model.News;
@@ -150,6 +153,7 @@ public class NewsFragment extends Fragment {
                                                     dataNew.put("uid", newsRef.getId());
                                                     newsRef.set(dataNew);
 
+                                                    NotificationService.sendNotification(getActivity(),newData, "News");
                                                     mAdapter.clear();
                                                     retrieveNews();
 
@@ -225,7 +229,14 @@ public class NewsFragment extends Fragment {
                         }
                     }
 
-                        mAdapter = new NewsListAdapter(newsList);
+                        mAdapter = new NewsListAdapter(newsList, getActivity(), new NewsListAdapter.CustomLongClickListener() {
+                            @Override
+                            public void onItemLongClick(View v, int position) {
+                                Intent intent = new Intent(getActivity(), NewsChatActivity.class);
+                                intent.putExtra("newsUid",newsList.get(position).getUid());
+                                startActivity(intent);
+                            }
+                        });
                     RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
                     recyclerView.setLayoutManager(mLayoutManager);
                     recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -341,6 +352,9 @@ public class NewsFragment extends Fragment {
     }
 
 
-
-
+//    public void onItemLongClicked(News modifiedNews) {
+//        Intent intent = new Intent(getActivity(), NewsChatActivity.class);
+//        intent.putExtra("newsUid",modifiedNews.getUid());
+//        startActivity(intent);
+//    }
 }

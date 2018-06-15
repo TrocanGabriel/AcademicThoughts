@@ -42,17 +42,19 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
     private List<News> newsList;
      String role = "";
 
-    public interface OnItemLongClickListener {
+    public interface CustomLongClickListener {
        void onItemLongClick(View v,int position);
     }
+    CustomLongClickListener listener;
+    Context mContext;
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView mTextView;
         public TextView mDateView;
         public ImageButton imageButton;
-        OnItemLongClickListener itemLongClickListener;
+        public View itemView;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -60,48 +62,44 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
             mDateView = itemView.findViewById(R.id.news_date_show);
             imageButton = itemView.findViewById(R.id.menu_button);
 
-            itemView.setOnLongClickListener(this);
-
+            this.itemView = itemView;
         }
 
-        public void setItemLongClickListener(OnItemLongClickListener ic)
-        {
-            this.itemLongClickListener=ic;
-        }
 
-        @Override
-        public boolean onLongClick(View v) {
-            this.itemLongClickListener.onItemLongClick(v,getLayoutPosition());
-            return false;
-        }
     }
 
     public NewsListAdapter(List<News> newsList){
         this.newsList = newsList;
     }
-
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.news_item_layout, parent, false);
-
-        return new ViewHolder(itemView);
+    public NewsListAdapter(List<News> newsList, Context mContext, CustomLongClickListener   listener){
+        this.newsList = newsList;
+        this.mContext = mContext;
+        this.listener = listener;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder,int position) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        final View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.news_item_layout, parent, false);
+        final ViewHolder viewHolder = new ViewHolder(itemView);
+
+        itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                listener.onItemLongClick(v, viewHolder.getAdapterPosition());
+                return true;
+            }
+        });
+        return viewHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, final int position) {
 
         News news = newsList.get(position);
         holder.mTextView.setText(news.getText());
         holder.mDateView.setText((news.getDate().toString()));
         final News modifiedNews = newsList.get(position);
-
-        holder.setItemLongClickListener(new OnItemLongClickListener() {
-            @Override
-            public void onItemLongClick(View v, int pos) {
-
-            }
-        });
 
 
         holder.imageButton.setOnClickListener(new View.OnClickListener() {

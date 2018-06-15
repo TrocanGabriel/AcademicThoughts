@@ -1,5 +1,6 @@
 package graduation.trocan.academicthoughts.adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.PopupMenu;
@@ -10,8 +11,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -20,6 +23,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import graduation.trocan.academicthoughts.R;
@@ -31,6 +36,7 @@ public class AgendaExamListAdapter extends RecyclerView.Adapter<AgendaExamListAd
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private List<AgendaExam> agendaExamList;
+    Context context;
     String role = "";
 
 
@@ -109,6 +115,40 @@ public class AgendaExamListAdapter extends RecyclerView.Adapter<AgendaExamListAd
                                 }
                                 break;
 
+                            case R.id.modify_exam_date:
+
+                                Context context = view.getContext();
+
+                                final View dialogView = View.inflate(context, R.layout.date_time_picker, null);
+                                final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+
+                                dialogView.findViewById(R.id.date_time_set).setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+
+                                        DatePicker datePicker =  dialogView.findViewById(R.id.date_picker);
+                                        TimePicker timePicker =  dialogView.findViewById(R.id.time_picker);
+
+                                        Calendar calendar = new GregorianCalendar(datePicker.getYear(),
+                                                datePicker.getMonth(),
+                                                datePicker.getDayOfMonth(),
+                                                timePicker.getCurrentHour(),
+                                                timePicker.getCurrentMinute());
+
+                                       Long time = calendar.getTimeInMillis();
+
+
+                                        db.collection("exams").document(selectedExam.getUid())
+                                                .update("date",calendar.getTime());
+
+                                        selectedExam.setDate(calendar.getTime());
+                                        alertDialog.dismiss();
+
+                                        notifyDataSetChanged();
+                                    }});
+                                alertDialog.setView(dialogView);
+                                alertDialog.show();
+
                         }
 
 
@@ -123,6 +163,7 @@ public class AgendaExamListAdapter extends RecyclerView.Adapter<AgendaExamListAd
         });
 
     }
+
 
     private void getRole(){
         FirebaseUser currentUser = mAuth.getCurrentUser();

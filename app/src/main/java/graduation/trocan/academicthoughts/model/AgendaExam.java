@@ -9,6 +9,17 @@ public class AgendaExam {
     private String professor;
     private Date date;
     private ArrayList<String> groups;
+    private String uid;
+    private Boolean isSet;
+
+    public AgendaExam(String course, String professor, Date date, ArrayList<String> groups, String uid, Boolean isSet) {
+        this.course = course;
+        this.professor = professor;
+        this.date = date;
+        this.groups = groups;
+        this.uid = uid;
+        this.isSet = isSet;
+    }
 
 
 
@@ -32,6 +43,13 @@ public class AgendaExam {
         this.date = date;
     }
 
+    public Boolean getSet() {
+        return isSet;
+    }
+
+    public void setSet(Boolean set) {
+        isSet = set;
+    }
 
     public String getProfessor() {
         return professor;
@@ -63,5 +81,13 @@ public class AgendaExam {
 
     public void setGroups(ArrayList<String> groups) {
         this.groups = groups;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }

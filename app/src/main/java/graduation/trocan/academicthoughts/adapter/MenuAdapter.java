@@ -30,7 +30,7 @@ public class MenuAdapter  extends FragmentPagerAdapter {
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private Context mContext;
-    private String roles = new String();
+    private String roles;
 
     public MenuAdapter(Context context, FragmentManager fm) {
         super(fm);

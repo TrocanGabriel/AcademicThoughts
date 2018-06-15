@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import graduation.trocan.academicthoughts.ExamsCheckingActivity;
 import graduation.trocan.academicthoughts.LoginActivity;
 import graduation.trocan.academicthoughts.R;
 import graduation.trocan.academicthoughts.adapter.AgendaExamListAdapter;
@@ -48,6 +49,7 @@ public class AgendaFragment extends Fragment {
     private List<SchoolCalendar> SchoolCalendarArrayList = new ArrayList<>();
     private List<AgendaExam> agendaExamList = new ArrayList<>();
     private Button  logoutButton;
+    private Button  checkExamsButton;
     private Spinner spinner;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private SchoolCalendarListAdapter mSchoolCalendarAdapter;
@@ -57,10 +59,7 @@ public class AgendaFragment extends Fragment {
 
     private RecyclerView SchoolCalendarRecyclerView;
     private RecyclerView examsRecyclerView;
-    private String studentUser;
     private String studentUserGroup;
-
-
 
 
 
@@ -73,6 +72,7 @@ public class AgendaFragment extends Fragment {
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
         logoutButton = view.findViewById(R.id.logout_button);
+        checkExamsButton = view.findViewById(R.id.check_exams_button);
         spinner = view.findViewById(R.id.days_spinner);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
@@ -88,19 +88,19 @@ public class AgendaFragment extends Fragment {
         Log.d(TAG, dayOfTheWeek);
         switch (dayOfTheWeek){
             case "Monday":
-                spinner.setSelection(1);
+                spinner.setSelection(0);
                 break;
             case "Tuesday":
-                spinner.setSelection(2);
+                spinner.setSelection(1);
                 break;
             case "Wednesday":
-                spinner.setSelection(3);
+                spinner.setSelection(2);
                 break;
             case "Thursday":
-                spinner.setSelection(4);
+                spinner.setSelection(3);
                 break;
             case "Friday":
-                spinner.setSelection(5);
+                spinner.setSelection(4);
                 break;
 
         }
@@ -124,16 +124,19 @@ public class AgendaFragment extends Fragment {
 
         retrieveExams();
 
-        if (currentUser != null){
-        } else {
 
-        }
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
             mAuth.signOut();
             startActivity(new Intent(getActivity(), LoginActivity.class));
             getActivity().finish();
+            }
+        });
+        checkExamsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), ExamsCheckingActivity.class));
             }
         });
 
@@ -152,6 +155,7 @@ public class AgendaFragment extends Fragment {
             Log.d(TAG, "PROFESSOR ROLE EXAM");
             db.collection("exams")
                     .whereEqualTo("professor",currentUser.getEmail())
+                    .whereEqualTo("isSet", true)
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
@@ -175,6 +179,7 @@ public class AgendaFragment extends Fragment {
         } else if (role.equals("student")){
             Log.d(TAG, "STUDENT ROLE EXAM");
             db.collection("exams")
+                    .whereEqualTo("isSet", true)
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
