@@ -30,29 +30,27 @@ import java.util.Locale;
 import graduation.trocan.academicthoughts.fragment.ProfessorExamFragment;
 import graduation.trocan.academicthoughts.fragment.StudentExamFragment;
 import graduation.trocan.academicthoughts.model.AgendaExam;
+import graduation.trocan.academicthoughts.model.ProposedDays;
 
-public class ExamsCheckingActivity extends AppCompatActivity {
 
-    private List<AgendaExam> allExams = new ArrayList<>();
+public class ExamsCheckingActivity extends AppCompatActivity  {
+
+    private static List<AgendaExam> allExams = new ArrayList<>();
     private List<Event> events = new ArrayList<>();
     private SimpleDateFormat dateFormatMonth = new SimpleDateFormat("MMMM- yyyy", Locale.getDefault());
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    static FirebaseFirestore db = FirebaseFirestore.getInstance();
     final FirebaseUser currentUser = mAuth.getCurrentUser();
-    private CompactCalendarView compactCalendarView;
+    private static CompactCalendarView compactCalendarView;
     private static final String TAG = "EXAMSCHECKING";
+    private static ArrayList<ProposedDays> propDays;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exams_checking);
-
-        if (findViewById(R.id.fragment_container) != null) {
-            if (savedInstanceState != null) {
-                return;
-            }
 
             db.collection("roles")
                     .document(currentUser.getEmail())
@@ -63,15 +61,19 @@ public class ExamsCheckingActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 DocumentSnapshot document = task.getResult();
                                 if (document.exists()) {
-                                    Fragment firstFragment;
                                     if(document.getString("role").equals("student")) {
 
-                                        firstFragment = new StudentExamFragment();
+                                        StudentExamFragment    firstFragment = new StudentExamFragment();
+                                        getSupportFragmentManager().beginTransaction()
+                                                .replace(R.id.fragment_container, firstFragment)
+                                                .commitAllowingStateLoss();
                                     } else {
-                                        firstFragment = new ProfessorExamFragment();
+                                        ProfessorExamFragment     firstFragment = new ProfessorExamFragment();
+                                        getSupportFragmentManager().beginTransaction()
+                                                .replace(R.id.fragment_container, firstFragment)
+                                                .commitAllowingStateLoss();
                                     }
-                                    getSupportFragmentManager().beginTransaction()
-                                            .add(R.id.fragment_container, firstFragment).commit();
+
                                     Log.d(TAG, document.getString("role") + "role " );
                                 } else {
                                     Log.d(TAG, "No such document");
@@ -81,7 +83,7 @@ public class ExamsCheckingActivity extends AppCompatActivity {
                             }
                         }
                     });
-        }
+
 
 
     retrieveAllExams();
@@ -93,6 +95,17 @@ public class ExamsCheckingActivity extends AppCompatActivity {
         compactCalendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
             @Override
             public void onDayClick(Date dateClicked) {
+                android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager ();
+                android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction ();
+                Bundle bundle = new Bundle();
+                bundle.putString("date", dateClicked.toString());
+                Fragment sendData = new StudentExamFragment();
+                sendData.setArguments(bundle);
+
+
+                fragmentTransaction.replace(R.id.fragment_container, sendData);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit ();
                 Context context = ExamsCheckingActivity.this;
                 events = compactCalendarView.getEvents(dateClicked);
                 Log.d(TAG, "Day was clicked: " + dateClicked + " with events " + events);
@@ -100,6 +113,7 @@ public class ExamsCheckingActivity extends AppCompatActivity {
                     Toast.makeText(context, " " + events.get(0).getData().toString(), Toast.LENGTH_SHORT).show();
                 }
                 else {
+
                 Toast.makeText(context, "No examen scheduled ", Toast.LENGTH_SHORT).show();
             }
 
@@ -129,9 +143,12 @@ public class ExamsCheckingActivity extends AppCompatActivity {
 
                             }
                             for(AgendaExam exam : allExams) {
-                                Log.d(TAG, "EXAM DATE SHOW " + exam.getDate().getTime());
-                                Event event = new Event(Color.BLACK, exam.getDate().getTime(),"Examen: " + exam.getCourse() + " cu " +exam.getProfessor() ADD);
-                                compactCalendarView.addEvent(event);
+                                if(exam.getSet()){
+                                    Log.d(TAG, "EXAM DATE SHOW " + exam.getDate().getTime());
+                                    Event event = new Event(Color.GREEN, exam.getDate().getTime(),"Examen: " + exam.getCourse() + " cu " +exam.getProfessor());
+                                    compactCalendarView.addEvent(event);
+                                }
+
                             }
 
 
@@ -143,5 +160,78 @@ public class ExamsCheckingActivity extends AppCompatActivity {
     }
 
 
+    public static void updateCalendar(String course, String userGroup){
+        Log.d(TAG, "ERROR CHECK EXAM COURSE");
+
+//        db.collection("exams")
+//            .whereEqualTo("course", course)
+//                .whereEqualTo("isSet", false)
+//                .get()
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//        @Override
+//        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//            if(task.isSuccessful()){
+//                allExams  = new ArrayList<>();
+//                for(QueryDocumentSnapshot doc : task.getResult()){
+//                    AgendaExam agendaExam = doc.toObject(AgendaExam.class);
+//                    allExams.add(agendaExam);
+//                    Log.d(TAG, " CHECK EXAM COURSE " + agendaExam.getCourse());
+//
+//                }
+//                for(AgendaExam exam : allExams) {
+//                    Log.d(TAG, "EXAM DATE SHOW " + exam.getDate().getTime());
+//                    Event event = new Event(Color.BLACK, exam.getDate().getTime(),"Examen: " + exam.getCourse() + " cu " +exam.getProfessor());
+//                    compactCalendarView.addEvent(event);
+//                }
+//
+//
+//            } else {
+//                Log.d(TAG, "ERROR CHECK EXAM COURSE");
+//            }
+//        }
+//    });
+
+
+
+        for(AgendaExam exam : allExams){
+            if(exam.getGroups().contains(userGroup) && exam.getCourse().equals(course)){
+             String   uid = exam.getUid();
+                db.collection("exams")
+                        .document(uid)
+                        .collection("proposedDays")
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if(task.isSuccessful()){
+                                    if(propDays != null) {
+                                        for (ProposedDays day : propDays) {
+                                            compactCalendarView.removeEvents(day.getDate());
+                                        }
+                                    }
+                                     propDays = new ArrayList<>();
+                                    for(DocumentSnapshot doc : task.getResult()){
+                                        ProposedDays prop = doc.toObject(ProposedDays.class);
+                                        propDays.add(prop);
+                                    }
+                                    for (ProposedDays day : propDays){
+                                        Log.d(TAG, "EXAM PROPOSED DATE SHOW " + day.getDate().getTime());
+                                        Event event = new Event(Color.RED, day.getDate().getTime(),"Examen proposed by: " + day.getStudent());
+
+                                        compactCalendarView.addEvent(event);
+                                    }
+
+
+
+                                }
+                            }
+                        });
+
+                break;
+            }
+        }
+
+
+}
 
 }

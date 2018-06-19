@@ -9,7 +9,6 @@
     <string name="loading">Loading...</string>
 
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="menu_agenda">Agenda</string>
@@ -23,6 +22,11 @@
     <string name="modify_exam_date">Modify date</string>
     <string name="check_exams_button">Check exams</string>
 
+    <!--ExamChecking Activity-->
+    <string name="verify_exam">Verify exam</string>
+    <string name="propose_exam">Propose exam</string>
+    <string name="select_exam">Select exam for proposition: </string>
+    <string name="select_exam_day">Select a day: </string>
     <string-array name="days_array">
         <item>Luni</item>
         <item>Marti</item>

@@ -155,7 +155,7 @@ public class AgendaFragment extends Fragment {
             Log.d(TAG, "PROFESSOR ROLE EXAM");
             db.collection("exams")
                     .whereEqualTo("professor",currentUser.getEmail())
-                    .whereEqualTo("isSet", true)
+                    .whereEqualTo("set", true)
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
@@ -179,7 +179,7 @@ public class AgendaFragment extends Fragment {
         } else if (role.equals("student")){
             Log.d(TAG, "STUDENT ROLE EXAM");
             db.collection("exams")
-                    .whereEqualTo("isSet", true)
+                    .whereEqualTo("set", true)
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override

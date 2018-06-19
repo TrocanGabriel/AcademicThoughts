@@ -10,7 +10,7 @@ public class AgendaExam {
     private Date date;
     private ArrayList<String> groups;
     private String uid;
-    private Boolean isSet;
+    private Boolean set;
 
     public AgendaExam(String course, String professor, Date date, ArrayList<String> groups, String uid, Boolean isSet) {
         this.course = course;
@@ -18,7 +18,7 @@ public class AgendaExam {
         this.date = date;
         this.groups = groups;
         this.uid = uid;
-        this.isSet = isSet;
+        this.set = isSet;
     }
 
 
@@ -44,11 +44,11 @@ public class AgendaExam {
     }
 
     public Boolean getSet() {
-        return isSet;
+        return set;
     }
 
     public void setSet(Boolean set) {
-        isSet = set;
+        this.set = set;
     }
 
     public String getProfessor() {

@@ -4,20 +4,49 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:padding="@dimen/activity_horizontal_margin"
     tools:context=".fragment.StudentExamFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello Student!" />
+        android:textStyle="bold"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:text="@string/select_exam_day"/>
+    <TextView
+        android:id="@+id/student_exam_date_selected"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+
+        android:id="@+id/select_exam"
+        android:textStyle="bold"
+        android:text="@string/select_exam" />
 
     <Spinner
         android:id="@+id/course_spinner_student"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+
         android:textAlignment="center"
         android:padding="@dimen/fab_margin"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:text="@string/propose_exam"
+        android:id="@+id/button_student_send_date"/>
 
 
 </LinearLayout>

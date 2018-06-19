@@ -51,7 +51,6 @@ public class NewsChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_news_chat);
         Intent intent = getIntent();
          uid = intent.getStringExtra("newsUid");
-
          recyclerView = findViewById(R.id.news_chat_recycler_view);
         Button button = findViewById(R.id.button_chat_message);
         retrieveChat();
@@ -63,9 +62,6 @@ public class NewsChatActivity extends AppCompatActivity {
             }
         });
 
-
-
-
     }
 
 
@@ -75,6 +71,7 @@ public class NewsChatActivity extends AppCompatActivity {
 
         db.collection("news").document(uid)
                 .collection("chat")
+                .orderBy("date")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -90,9 +87,11 @@ public class NewsChatActivity extends AppCompatActivity {
                       }
                         mAdapter = new NewsChatAdapter(newsChatList);
                         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
+                        mLayoutManager.scrollToPosition(newsChatList.size()-1);
                         recyclerView.setLayoutManager(mLayoutManager);
                         recyclerView.setItemAnimator(new DefaultItemAnimator());
                         recyclerView.setAdapter(mAdapter);
+
                     }
                         else {
                         Log.d(TAG,"CHAT retrieval failed");
@@ -107,7 +106,7 @@ public class NewsChatActivity extends AppCompatActivity {
         Date date = new Date();
         EditText editText = findViewById(R.id.text_news_chat);
         String message = editText.getText().toString();
-        NewsChat newDocument = new NewsChat(user.getEmail().toString(),message,date);
+        NewsChat newDocument = new NewsChat(user.getEmail(),message,date);
         db.collection("news")
                 .document(uid)
                 .collection("chat")
@@ -119,6 +118,7 @@ public class NewsChatActivity extends AppCompatActivity {
    private void realTimeUpdateListener() {
         db.collection("news").document(uid)
                 .collection("chat")
+                .orderBy("date")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
@@ -135,6 +135,7 @@ public class NewsChatActivity extends AppCompatActivity {
 
                         mAdapter = new NewsChatAdapter(newsChatList);
                         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
+                        mLayoutManager.scrollToPosition(newsChatList.size()-1);
                         recyclerView.setLayoutManager(mLayoutManager);
                         recyclerView.setItemAnimator(new DefaultItemAnimator());
                         recyclerView.setAdapter(mAdapter);
