@@ -13,6 +13,8 @@ import android.widget.Toast;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -39,12 +41,13 @@ public class ExamsCheckingActivity extends AppCompatActivity  {
     private List<Event> events = new ArrayList<>();
     private SimpleDateFormat dateFormatMonth = new SimpleDateFormat("MMMM- yyyy", Locale.getDefault());
 
-    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private static FirebaseAuth mAuth = FirebaseAuth.getInstance();
     static FirebaseFirestore db = FirebaseFirestore.getInstance();
-    final FirebaseUser currentUser = mAuth.getCurrentUser();
+    final static FirebaseUser currentUser = mAuth.getCurrentUser();
     private static CompactCalendarView compactCalendarView;
     private static final String TAG = "EXAMSCHECKING";
     private static ArrayList<ProposedDays> propDays;
+    private static Date selectedDate;
 
 
     @Override
@@ -98,6 +101,7 @@ public class ExamsCheckingActivity extends AppCompatActivity  {
                 android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager ();
                 android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction ();
                 Bundle bundle = new Bundle();
+                selectedDate = dateClicked;
                 bundle.putString("date", dateClicked.toString());
                 Fragment sendData = new StudentExamFragment();
                 sendData.setArguments(bundle);
@@ -157,41 +161,12 @@ public class ExamsCheckingActivity extends AppCompatActivity  {
                         }
                     }
                 });
+
     }
 
 
     public static void updateCalendar(String course, String userGroup){
         Log.d(TAG, "ERROR CHECK EXAM COURSE");
-
-//        db.collection("exams")
-//            .whereEqualTo("course", course)
-//                .whereEqualTo("isSet", false)
-//                .get()
-//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//        @Override
-//        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//            if(task.isSuccessful()){
-//                allExams  = new ArrayList<>();
-//                for(QueryDocumentSnapshot doc : task.getResult()){
-//                    AgendaExam agendaExam = doc.toObject(AgendaExam.class);
-//                    allExams.add(agendaExam);
-//                    Log.d(TAG, " CHECK EXAM COURSE " + agendaExam.getCourse());
-//
-//                }
-//                for(AgendaExam exam : allExams) {
-//                    Log.d(TAG, "EXAM DATE SHOW " + exam.getDate().getTime());
-//                    Event event = new Event(Color.BLACK, exam.getDate().getTime(),"Examen: " + exam.getCourse() + " cu " +exam.getProfessor());
-//                    compactCalendarView.addEvent(event);
-//                }
-//
-//
-//            } else {
-//                Log.d(TAG, "ERROR CHECK EXAM COURSE");
-//            }
-//        }
-//    });
-
-
 
         for(AgendaExam exam : allExams){
             if(exam.getGroups().contains(userGroup) && exam.getCourse().equals(course)){
@@ -228,10 +203,77 @@ public class ExamsCheckingActivity extends AppCompatActivity  {
                         });
 
                 break;
+
             }
         }
 
 
 }
 
+    public static void saveProposedDate(String s, String userGroup, String courseSelected) {
+
+        if (!s.equals("No date selected")) {
+
+
+            Boolean valid = false;
+            for (AgendaExam exam : allExams) {
+                if (exam.getSet() &&
+                        exam.getDate() == selectedDate &&
+                        exam.getGroups().contains(userGroup)) {
+                } else {
+                    valid = true;
+                }
+            }
+            if (valid) {
+                for (AgendaExam exam : allExams) {
+                    if (!exam.getSet() && exam.getGroups().contains(userGroup) && exam.getCourse().equals(courseSelected)) {
+                        Boolean userExists = false;
+                        for (ProposedDays prop : propDays)
+                             {
+                                 if(prop.getStudent().equals(currentUser.getEmail())){
+                                     userExists = true;
+                                     break;
+                                 }
+
+                        }
+                        if(!userExists) {
+                            ProposedDays prop = new ProposedDays(currentUser.getEmail(), selectedDate);
+                            db.collection("exams")
+                                    .document(exam.getUid())
+                                    .collection("proposedDays")
+                                    .document(currentUser.getEmail())
+                                    .set(prop);
+
+                        } else {
+                            db.collection("exams")
+                                    .document(exam.getUid())
+                                    .collection("proposedDays")
+                                    .document(currentUser.getEmail())
+                                    .update("date", selectedDate)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d(TAG, "DocumentSnapshot successfully updated!");
+
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w(TAG, "Error updating document", e);
+
+                                        }
+                                    });
+                        }
+                    }
+                }
+                updateCalendar(courseSelected,userGroup);
+            }
+
+        }
+
+    }
+
 }
+
+
