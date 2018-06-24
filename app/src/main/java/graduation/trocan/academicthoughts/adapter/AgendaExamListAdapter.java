@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -38,6 +39,7 @@ public class AgendaExamListAdapter extends RecyclerView.Adapter<AgendaExamListAd
     private List<AgendaExam> agendaExamList;
     Context context;
     String role = "";
+    SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -78,7 +80,7 @@ public class AgendaExamListAdapter extends RecyclerView.Adapter<AgendaExamListAd
         } else {
             holder.mTitleView.setText(agendaExam.getCourse());
         }
-        holder.mDateView.setText((agendaExam.getDate().toString()));
+        holder.mDateView.setText((DATE_FORMAT.format(agendaExam.getDate())));
         final AgendaExam selectedExam = agendaExamList.get(position);
         holder.imageButton.setOnClickListener(new View.OnClickListener() {
             @Override

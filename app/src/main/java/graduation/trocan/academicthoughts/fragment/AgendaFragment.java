@@ -152,6 +152,7 @@ public class AgendaFragment extends Fragment {
         Log.d(TAG, " ROLE EXAM " + role);
 
         if(role.equals("professor")){
+
             Log.d(TAG, "PROFESSOR ROLE EXAM");
             db.collection("exams")
                     .whereEqualTo("professor",currentUser.getEmail())
@@ -177,6 +178,7 @@ public class AgendaFragment extends Fragment {
                     });
 
         } else if (role.equals("student")){
+
             Log.d(TAG, "STUDENT ROLE EXAM");
             db.collection("exams")
                     .whereEqualTo("set", true)

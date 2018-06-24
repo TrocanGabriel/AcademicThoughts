@@ -131,11 +131,6 @@ public class LoginActivity extends AppCompatActivity implements
         // [END sign_in_with_email]
     }
 
-    private void signOut() {
-        mAuth.signOut();
-        updateUI(null);
-    }
-
     private void sendEmailVerification() {
 
         // Send verification email
@@ -222,11 +217,11 @@ public class LoginActivity extends AppCompatActivity implements
             mProgressDialog.setMessage(getString(R.string.loading));
             mProgressDialog.setIndeterminate(true);
         }
-
         mProgressDialog.show();
+
     }
 
-    public void hideProgressDialog() {
+    public  void hideProgressDialog() {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
         }

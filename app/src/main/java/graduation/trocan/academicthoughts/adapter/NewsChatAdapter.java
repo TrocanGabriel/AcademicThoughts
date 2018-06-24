@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import graduation.trocan.academicthoughts.R;
@@ -20,6 +21,7 @@ public class NewsChatAdapter extends RecyclerView.Adapter<NewsChatAdapter.ViewHo
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private List<NewsChat> newsChatList;
     String role = "";
+    SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
 
 
@@ -54,7 +56,7 @@ public class NewsChatAdapter extends RecyclerView.Adapter<NewsChatAdapter.ViewHo
 
         NewsChat newsChat = newsChatList.get(position);
         holder.mUserView.setText(newsChat.getUser());
-        holder.mDateView.setText(newsChat.getDate().toString());
+        holder.mDateView.setText(DATE_FORMAT.format(newsChat.getDate()));
         holder.mMessageView.setText(newsChat.getMessage());
     }
 

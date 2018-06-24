@@ -20,8 +20,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
-        <activity android:name=".NewsChatActivity" />
-        <activity android:name=".ExamsCheckingActivity"></activity>
+        <activity android:name=".NewsChatActivity"
+            android:parentActivityName=".MainActivity"/>
+        <activity android:name=".ExamsCheckingActivity"
+            android:parentActivityName=".MainActivity"/>
     </application>
 
 </manifest>

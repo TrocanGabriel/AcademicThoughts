@@ -26,6 +26,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import graduation.trocan.academicthoughts.R;
@@ -41,6 +42,8 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private List<News> newsList;
      String role = "";
+    SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
 
     public interface CustomLongClickListener {
        void onItemLongClick(View v,int position);
@@ -98,7 +101,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
 
         News news = newsList.get(position);
         holder.mTextView.setText(news.getText());
-        holder.mDateView.setText((news.getDate().toString()));
+        holder.mDateView.setText(DATE_FORMAT.format(news.getDate()));
         final News modifiedNews = newsList.get(position);
 
 

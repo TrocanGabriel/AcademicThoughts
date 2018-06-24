@@ -50,19 +50,20 @@ import graduation.trocan.academicthoughts.model.TargetCheckbox;
 
 public class NewsFragment extends Fragment {
 
-    private List<News> newsList = new ArrayList<>();
+    private static List<News> newsList = new ArrayList<>();
     private List<String> targets = new ArrayList<>();
-    private RecyclerView recyclerView;
+    private static RecyclerView recyclerView;
     private RecyclerView targetRecyclerView;
-    private String role;
-    private String studentGroup;
+    private static String role;
+    private static String studentGroup;
 
-    private NewsListAdapter mAdapter;
+
+    private static NewsListAdapter mAdapter;
     private TargetGroupsForNewsListAdapter mAdapterTargets;
     Context context = getActivity();
     public static final String TAG = "NewsFragment";
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    static FirebaseFirestore db = FirebaseFirestore.getInstance();
+    static FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     private List<TargetCheckbox> currentSelectedItems = new ArrayList<>();
 
@@ -72,9 +73,10 @@ public class NewsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
-       View view = inflater.inflate(R.layout.fragment_news, container, false);
+//        retrieveNews();
+        View view = inflater.inflate(R.layout.fragment_news, container, false);
        recyclerView = view.findViewById(R.id.news_recycler_view);
-        retrieveNews();
+
 
         final FloatingActionButton floatingActionButton = view.findViewById(R.id.add_news_button);
         final FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -117,9 +119,6 @@ public class NewsFragment extends Fragment {
                         targetRecyclerView = promptView.findViewById(R.id.news_target_recycler_view);
                         getTargetList();
 
-
-
-
                         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
                         alertDialogBuilder.setView(promptView);
                         alertDialogBuilder
@@ -155,11 +154,8 @@ public class NewsFragment extends Fragment {
 
                                                     NotificationService.sendNotification(getActivity(),newData, "News");
                                                     mAdapter.clear();
-                                                    retrieveNews();
-
-
+                                                    retrieveNews(context);
                                                 }
-
                                             }
                                         })
                                 .setNegativeButton("Cancel",
@@ -168,34 +164,22 @@ public class NewsFragment extends Fragment {
                                                 dialog.cancel();
                                             }
                                         });
-
-                        // create alert dialog
                         AlertDialog alertDialog = alertDialogBuilder.create();
-
-                        // show it
                         alertDialog.show();
-
                     }
                 });
-
             }
             else {
                 floatingActionButton.setOnClickListener(null);
             }
-
-
    return view;
     }
 
-
-
-
-
-    private void retrieveNews(){
+    public static void retrieveNews(final Context context){
 
         final FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        getUserGroup();
+        getUserGroup(context );
 
         db.collection("news")
         .orderBy("date", Query.Direction.DESCENDING)
@@ -205,9 +189,9 @@ public class NewsFragment extends Fragment {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if( task.isSuccessful()){
                     newsList = new ArrayList<>();
-                    Context context = getActivity();
+
                     role = getFavorites(context);
-                    SharedPreferences sharedPref = getActivity().getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE);
+                    SharedPreferences sharedPref = context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE);
                    String studentGroup2 = sharedPref.getString("studentGroup","");
                     Log.d(TAG, "NEWS ROLE studentGroup : " + studentGroup2);
                     Log.d(TAG, "NEWS ROLE role : " + role);
@@ -229,22 +213,19 @@ public class NewsFragment extends Fragment {
                         }
                     }
 
-                        mAdapter = new NewsListAdapter(newsList, getActivity(), new NewsListAdapter.CustomLongClickListener() {
+                        mAdapter = new NewsListAdapter(newsList, context, new NewsListAdapter.CustomLongClickListener() {
                             @Override
                             public void onItemLongClick(View v, int position) {
-                                Intent intent = new Intent(getActivity(), NewsChatActivity.class);
+                                Intent intent = new Intent(context, NewsChatActivity.class);
                                 intent.putExtra("newsUid",newsList.get(position).getUid());
-                                startActivity(intent);
-                            }
+                                context.startActivity(intent);                            }
                         });
-                    RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+                    RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
                     recyclerView.setLayoutManager(mLayoutManager);
                     recyclerView.setItemAnimator(new DefaultItemAnimator());
                     recyclerView.setAdapter(mAdapter);
                 } else {
-
                     Log.d(TAG, "Error on retrieving news list");
-
                 }
             }
         });
@@ -314,7 +295,7 @@ public class NewsFragment extends Fragment {
         editor.apply();
     }
 
-    public String getFavorites(Context context) {
+    public static String getFavorites(Context context) {
         SharedPreferences settings;
        String favorites;
 
@@ -333,7 +314,7 @@ public class NewsFragment extends Fragment {
         return  favorites;
     }
 
-    private void getUserGroup(){
+    private static void getUserGroup(final Context context){
         FirebaseUser currentUser = mAuth.getCurrentUser();
         db.collection("students").document(currentUser.getEmail())
                 .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -341,8 +322,8 @@ public class NewsFragment extends Fragment {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 studentGroup = documentSnapshot.getString("group");
                 Log.d(TAG, "STUDENT GET ROLE " + studentGroup);
-                Context context = getActivity();
-                SharedPreferences sharedPref = getActivity().getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE);
+
+                SharedPreferences sharedPref = context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putString("studentGroup", studentGroup);
                 editor.apply();
@@ -352,9 +333,6 @@ public class NewsFragment extends Fragment {
     }
 
 
-//    public void onItemLongClicked(News modifiedNews) {
-//        Intent intent = new Intent(getActivity(), NewsChatActivity.class);
-//        intent.putExtra("newsUid",modifiedNews.getUid());
-//        startActivity(intent);
-//    }
+
+
 }

@@ -1,5 +1,6 @@
 package graduation.trocan.academicthoughts.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -34,38 +35,29 @@ import graduation.trocan.academicthoughts.model.Student;
 public class StudentExamFragment extends Fragment {
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    static FirebaseFirestore db = FirebaseFirestore.getInstance();
     final FirebaseUser currentUser = mAuth.getCurrentUser();
-    private List<String> courses;
+    private  List<String> courses;
     private List<AgendaExam> allExams;
     private String selectedDateString;
-    private String userGroup;
-    private Spinner courseSpinner;
+    private  String userGroup;
+    private  Spinner courseSpinner;
     private String courseSelected;
     private static final String TAG = "STUDENT EXAM";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        retrieveAllExams();
         retrieveUser();
-        // Inflate the layout for this fragment
-       final View view = inflater.inflate(R.layout.fragment_student_exam, container, false);
-       Bundle bundle = getArguments();
+        retrieveAllExams();
 
+       final View view = inflater.inflate(R.layout.fragment_student_exam, container, false);
         final TextView selectedDate = view.findViewById(R.id.student_exam_date_selected);
         Button button = view.findViewById(R.id.button_student_send_date);
-
-        if(bundle != null) {
-            selectedDateString = bundle.getString("date");
-            selectedDate.setText(selectedDateString);
-        } else {
-            selectedDate.setText("No date selected");
-        }
-
         courseSpinner = view.findViewById(R.id.course_spinner_student);
 
-        retrieveStudentExams(view);
+        retrieveStudentExams(getContext());
+
 
         courseSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -73,43 +65,18 @@ public class StudentExamFragment extends Fragment {
                 courseSelected = parent.getItemAtPosition(position).toString();
                 ExamsCheckingActivity.updateCalendar(courseSelected, userGroup);
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 Log.d("STUDENT EXAM FRAG", "Nothing selected in course spinner");
-
             }
         });
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
-
-                               //TODO isSet for professor here
-//                               db.collection("exams")
-//                                       .document(exam.getUid())
-//                                       .update("isSet", true)
-//                                       .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                           @Override
-//                                           public void onSuccess(Void aVoid) {
-//                                               Log.d(TAG, "DocumentSnapshot successfully updated!");
-//
-//                                           }
-//                                       })
-//                                       .addOnFailureListener(new OnFailureListener() {
-//                                           @Override
-//                                           public void onFailure(@NonNull Exception e) {
-//                                               Log.w(TAG, "Error updating isSet", e);
-//                                           }
-//                                       });
-
                 ExamsCheckingActivity.saveProposedDate(selectedDate.getText().toString(), userGroup,courseSelected);
                            }
                        });
-
-
    return view;
     }
 
@@ -127,11 +94,7 @@ public class StudentExamFragment extends Fragment {
                                 AgendaExam agendaExam = doc.toObject(AgendaExam.class);
                                 allExams.add(agendaExam);
                                 Log.d(TAG, " CHECK EXAM COURSE " + agendaExam.getCourse());
-
                             }
-
-
-
                         } else {
                             Log.d(TAG, "ERROR CHECK EXAM COURSE");
                         }
@@ -155,7 +118,8 @@ public class StudentExamFragment extends Fragment {
                 });
     }
 
-    private void retrieveStudentExams(final View view) {
+    public void retrieveStudentExams(final Context context) {
+
         db.collection("exams")
                 .whereEqualTo("set", false)
                 .get()
@@ -169,18 +133,32 @@ public class StudentExamFragment extends Fragment {
                                 Log.d(TAG, "STUDENT ROLE EXAM email " + userGroup);
                                 if(exam.getGroups().contains(userGroup)) {
                                     courses.add(exam.getCourse());
-
-                                }
-                                courseSpinner = view.findViewById(R.id.course_spinner_student);
-                                ArrayAdapter<String> categoriesAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, courses);
-                                courseSpinner.setAdapter(categoriesAdapter);
                             }
-
+                            }
+                            ArrayAdapter<String> categoriesAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, courses);
+                            courseSpinner.setAdapter(categoriesAdapter);
                             Log.d(TAG, "STUDENT ROLE EXAM LIST CALENDAR" + courses);
 
                         }
                     }
                 });
+
+//        db.collection("exams")
+//                .whereEqualTo("set",false)
+//                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+//                        for(DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()){
+//                              AgendaExam exam = doc.toObject(AgendaExam.class);
+//                            if(exam.getGroups().contains(userGroup)) {
+//                                    courses.add(exam.getCourse());
+//                            }
+//                        }
+//                        ArrayAdapter<String> categoriesAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, courses);
+//                        courseSpinner.setAdapter(categoriesAdapter);
+//
+//                    }
+//                });
     }
 
 

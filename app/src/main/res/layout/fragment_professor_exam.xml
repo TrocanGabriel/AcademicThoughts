@@ -4,19 +4,46 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:padding="16dp"
     tools:context=".fragment.ProfessorExamFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello professor!" />
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:text="@string/select_exam_day"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/professor_exam_date_selected"
+        android:layout_width="wrap_content"
+
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_horizontal_margin" />
+
+    <TextView
+        android:id="@+id/select_exam_professor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:text="@string/select_exam_professor"
+        android:textStyle="bold" />
 
     <Spinner
-        android:id="@+id/course_spinner_profesor"
+        android:id="@+id/course_spinner_professor"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:padding="@dimen/fab_margin"/>
+        android:padding="@dimen/fab_margin"
+        android:textAlignment="center" />
+
+    <Button
+        android:id="@+id/button_professor_set_date"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="wrap_content"
+
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:text="@string/set_exam" />
 
 </LinearLayout>

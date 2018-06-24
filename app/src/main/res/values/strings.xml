@@ -21,6 +21,8 @@
     <string name="exams_list">My exams: </string>
     <string name="modify_exam_date">Modify date</string>
     <string name="check_exams_button">Check exams</string>
+    <string name="select_exam_professor"> Select exam: </string>
+    <string name="set_exam">Set Exam</string>
 
     <!--ExamChecking Activity-->
     <string name="verify_exam">Verify exam</string>
