@@ -40,7 +40,6 @@ import java.util.Map;
 
 import graduation.trocan.academicthoughts.NewsChatActivity;
 import graduation.trocan.academicthoughts.R;
-import graduation.trocan.academicthoughts.Service.NotificationService;
 import graduation.trocan.academicthoughts.adapter.NewsListAdapter;
 import graduation.trocan.academicthoughts.adapter.TargetGroupsForNewsListAdapter;
 import graduation.trocan.academicthoughts.model.News;
@@ -76,6 +75,7 @@ public class NewsFragment extends Fragment {
 //        retrieveNews();
         View view = inflater.inflate(R.layout.fragment_news, container, false);
        recyclerView = view.findViewById(R.id.news_recycler_view);
+//       retrieveNews(context);
 
 
         final FloatingActionButton floatingActionButton = view.findViewById(R.id.add_news_button);
@@ -152,7 +152,6 @@ public class NewsFragment extends Fragment {
                                                     dataNew.put("uid", newsRef.getId());
                                                     newsRef.set(dataNew);
 
-                                                    NotificationService.sendNotification(getActivity(),newData, "News");
                                                     mAdapter.clear();
                                                     retrieveNews(context);
                                                 }
@@ -213,9 +212,9 @@ public class NewsFragment extends Fragment {
                         }
                     }
 
-                        mAdapter = new NewsListAdapter(newsList, context, new NewsListAdapter.CustomLongClickListener() {
+                        mAdapter = new NewsListAdapter(newsList, context, new NewsListAdapter.CustomClickListener() {
                             @Override
-                            public void onItemLongClick(View v, int position) {
+                            public void onItemClick(View v, int position) {
                                 Intent intent = new Intent(context, NewsChatActivity.class);
                                 intent.putExtra("newsUid",newsList.get(position).getUid());
                                 context.startActivity(intent);                            }

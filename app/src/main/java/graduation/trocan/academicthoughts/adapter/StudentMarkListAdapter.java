@@ -2,6 +2,7 @@ package graduation.trocan.academicthoughts.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -93,11 +94,11 @@ public class StudentMarkListAdapter extends  RecyclerView.Adapter<StudentMarkLis
                                             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                                StudentMark studentMark =  queryDocumentSnapshots.getDocuments().get(0).toObject(StudentMark.class);
                                                 String professor_email = studentMark.getProfessor();
-                                                Intent i = new Intent(Intent.ACTION_SEND);
-                                        i.setType("message/rfc822");
-                                        i.putExtra(Intent.EXTRA_EMAIL  , new String[]{professor_email});
-                                        i.putExtra(Intent.EXTRA_SUBJECT, "Insert subject");
-                                        i.putExtra(Intent.EXTRA_TEXT   , " S");
+                                                String [] emails = new String[]{professor_email};
+                                                Intent i = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                                                        "mailto",emails[0], null));
+                                                i.putExtra(Intent.EXTRA_SUBJECT, "Subject");
+                                                i.putExtra(Intent.EXTRA_TEXT, "Body");
                                         try {
                                             itemView.getContext().startActivity(Intent.createChooser(i, "Send mail..."));
                                         } catch (android.content.ActivityNotFoundException ex) {

@@ -142,23 +142,6 @@ public class StudentExamFragment extends Fragment {
                         }
                     }
                 });
-
-//        db.collection("exams")
-//                .whereEqualTo("set",false)
-//                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-//                        for(DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()){
-//                              AgendaExam exam = doc.toObject(AgendaExam.class);
-//                            if(exam.getGroups().contains(userGroup)) {
-//                                    courses.add(exam.getCourse());
-//                            }
-//                        }
-//                        ArrayAdapter<String> categoriesAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, courses);
-//                        courseSpinner.setAdapter(categoriesAdapter);
-//
-//                    }
-//                });
     }
 
 

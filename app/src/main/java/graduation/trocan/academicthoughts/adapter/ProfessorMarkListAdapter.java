@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -103,7 +104,7 @@ public class ProfessorMarkListAdapter extends RecyclerView.Adapter<ProfessorMark
                         switch (item.getItemId()) {
                             case R.id.give_mark:
 
-                                Context context = itemView.getContext();
+                                final Context context = itemView.getContext();
                                 LayoutInflater layoutInflater = LayoutInflater.from(context);
                                 final View promptView = layoutInflater.inflate(R.layout.give_mark_prompt, null);
                                 final EditText editingMark = promptView.findViewById(R.id.new_mark);
@@ -116,44 +117,49 @@ public class ProfessorMarkListAdapter extends RecyclerView.Adapter<ProfessorMark
                                                 new DialogInterface.OnClickListener() {
                                                     public void onClick(DialogInterface dialog, int id) {
 
-                                                        final int newData = Integer.parseInt(String.valueOf(editingMark.getText()));
-                                                        if (newData <= 10 && newData >= 0) {
-                                                            DocumentReference profMarkRef = db.collection("professors")
-                                                                    .document(currentUser.getEmail())
-                                                                    .collection("myStudents")
-                                                                    .document(modifiedData.getEmail());
-                                                            profMarkRef.update("mark", newData);
-                                                            professorMarkList.get(professorMarkList.indexOf(modifiedData)).setMark(newData);
-                                                            db.collection("students")
-                                                                    .document(modifiedData.getEmail())
-                                                                    .collection("marks")
-                                                                    .whereEqualTo("course",modifiedData.getCourse())
-                                                                    .get()
-                                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                                        @Override
-                                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                                            if (task.isSuccessful()) {
-                                                                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                                                                    Log.d(TAG, document.getId() + " => " + document.getData());
-                                                                                    db.collection("students")
-                                                                                            .document(modifiedData.getEmail())
-                                                                                            .collection("marks")
-                                                                                            .document(document.getId())
-                                                                                            .update("mark",newData);
+                                                        if(!editingMark.getText().toString().equals("")) {
+                                                            final int newData = Integer.parseInt(String.valueOf(editingMark.getText()));
+                                                            if (newData <= 10 && newData >= 1) {
+                                                                DocumentReference profMarkRef = db.collection("professors")
+                                                                        .document(currentUser.getEmail())
+                                                                        .collection("myStudents")
+                                                                        .document(modifiedData.getEmail());
+                                                                profMarkRef.update("mark", newData);
+                                                                professorMarkList.get(professorMarkList.indexOf(modifiedData)).setMark(newData);
+                                                                db.collection("students")
+                                                                        .document(modifiedData.getEmail())
+                                                                        .collection("marks")
+                                                                        .whereEqualTo("course", modifiedData.getCourse())
+                                                                        .get()
+                                                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                            @Override
+                                                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                                if (task.isSuccessful()) {
+                                                                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                        Log.d(TAG, document.getId() + " => " + document.getData());
+                                                                                        db.collection("students")
+                                                                                                .document(modifiedData.getEmail())
+                                                                                                .collection("marks")
+                                                                                                .document(document.getId())
+                                                                                                .update("mark", newData);
 
+                                                                                    }
+                                                                                } else {
+                                                                                    Log.d(TAG, "Error getting documents: ", task.getException());
                                                                                 }
-                                                                            } else {
-                                                                                Log.d(TAG, "Error getting documents: ", task.getException());
                                                                             }
-                                                                        }
-                                                                    });
+                                                                        });
 
 
+                                                                notifyDataSetChanged();
 
-                                                            notifyDataSetChanged();
+                                                            } else {
+                                                                Toast.makeText(context, "Grades should be between 1 and 10", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        } else {
+                                                            Toast.makeText(context, "Grades should be between 1 and 10", Toast.LENGTH_SHORT).show();
 
                                                         }
-
                                                     }
                                                 })
                                         .setNegativeButton("Cancel",
@@ -184,11 +190,11 @@ public class ProfessorMarkListAdapter extends RecyclerView.Adapter<ProfessorMark
 
                                          ProfessorMark professorMark = documentSnapshot.toObject(ProfessorMark.class);
                                         String student_email = professorMark.getEmail();
-                                        Intent i = new Intent(Intent.ACTION_SEND);
-                                        i.setType("message/rfc822");
-                                        i.putExtra(Intent.EXTRA_EMAIL  , new String[]{student_email});
-                                        i.putExtra(Intent.EXTRA_SUBJECT, "Insert subject");
-                                        i.putExtra(Intent.EXTRA_TEXT   , " S");
+                                       String [] emails = new String[]{student_email};
+                                        Intent i = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                                                "mailto",emails[0], null));
+                                        i.putExtra(Intent.EXTRA_SUBJECT, "Subject");
+                                        i.putExtra(Intent.EXTRA_TEXT, "Body");
                                         try {
                                             itemView.getContext().startActivity(Intent.createChooser(i, "Send mail..."));
                                         } catch (android.content.ActivityNotFoundException ex) {

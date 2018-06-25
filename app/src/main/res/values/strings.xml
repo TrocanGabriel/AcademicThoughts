@@ -41,7 +41,7 @@
     <!--News fragment-->
     <string name="edit_news">Edit</string>
     <string name="delete_news">Delete</string>
-    <string name="email_news_author">Email Author</string>
+    <string name="email_news_author">Email Professor</string>
 
 
     <!--Professor Fragment-->

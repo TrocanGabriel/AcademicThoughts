@@ -3,6 +3,7 @@ package graduation.trocan.academicthoughts.adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -105,11 +106,11 @@ public class AgendaExamListAdapter extends RecyclerView.Adapter<AgendaExamListAd
 
                                 final Context finalContext;
                                 finalContext = view.getContext();
-                                Intent i = new Intent(Intent.ACTION_SEND);
-                                i.setType("message/rfc822");
-                                i.putExtra(Intent.EXTRA_EMAIL  , new String[]{professorEmail});
-                                i.putExtra(Intent.EXTRA_SUBJECT, "Insert subject");
-                                i.putExtra(Intent.EXTRA_TEXT   , " S");
+                                String [] emails = new String[]{professorEmail};
+                                Intent i = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                                        "mailto",emails[0], null));
+                                i.putExtra(Intent.EXTRA_SUBJECT, "Subject");
+                                i.putExtra(Intent.EXTRA_TEXT, "Body");
                                 try {
                                     finalContext.startActivity(Intent.createChooser(i, "Send mail..."));
                                 } catch (android.content.ActivityNotFoundException ex) {

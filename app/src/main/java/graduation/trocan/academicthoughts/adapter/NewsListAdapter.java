@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -45,10 +46,10 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
     SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
 
-    public interface CustomLongClickListener {
-       void onItemLongClick(View v,int position);
+    public interface CustomClickListener {
+       void onItemClick(View v,int position);
     }
-    CustomLongClickListener listener;
+    CustomClickListener listener;
     Context mContext;
 
 
@@ -74,7 +75,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
     public NewsListAdapter(List<News> newsList){
         this.newsList = newsList;
     }
-    public NewsListAdapter(List<News> newsList, Context mContext, CustomLongClickListener   listener){
+    public NewsListAdapter(List<News> newsList, Context mContext, CustomClickListener   listener){
         this.newsList = newsList;
         this.mContext = mContext;
         this.listener = listener;
@@ -86,11 +87,10 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
                 .inflate(R.layout.news_item_layout, parent, false);
         final ViewHolder viewHolder = new ViewHolder(itemView);
 
-        itemView.setOnLongClickListener(new View.OnLongClickListener() {
+        itemView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onLongClick(View v) {
-                listener.onItemLongClick(v, viewHolder.getAdapterPosition());
-                return true;
+            public void onClick(View v) {
+                listener.onItemClick(v, viewHolder.getAdapterPosition());
             }
         });
         return viewHolder;
@@ -204,11 +204,11 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                                         News news = documentSnapshot.toObject(News.class);
                                         String author_email = news.getAuthor();
-                                        Intent i = new Intent(Intent.ACTION_SEND);
-                                        i.setType("message/rfc822");
-                                        i.putExtra(Intent.EXTRA_EMAIL  , new String[]{author_email});
-                                        i.putExtra(Intent.EXTRA_SUBJECT, "Insert subject");
-                                        i.putExtra(Intent.EXTRA_TEXT   , " S");
+                                        String [] emails = new String[]{author_email};
+                                        Intent i = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                                                "mailto",emails[0], null));
+                                        i.putExtra(Intent.EXTRA_SUBJECT, "Subject");
+                                        i.putExtra(Intent.EXTRA_TEXT, "Body");
                                         try {
                                             itemView.getContext().startActivity(Intent.createChooser(i, "Send mail..."));
                                         } catch (android.content.ActivityNotFoundException ex) {

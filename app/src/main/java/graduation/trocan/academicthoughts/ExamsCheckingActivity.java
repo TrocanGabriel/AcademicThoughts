@@ -153,7 +153,8 @@ public class ExamsCheckingActivity extends AppCompatActivity  {
     public static void retrieveAllExams(){
 
         for(AgendaExam exam : allExams){
-            compactCalendarView.removeEvents(exam.getDate());
+            compactCalendarView.removeAllEvents();
+            break;
         }
         Log.d(TAG, "ALLEXAMS");
         db.collection("exams")
