@@ -142,7 +142,6 @@ public class ProfessorMarkListAdapter extends RecyclerView.Adapter<ProfessorMark
                                                                                                 .collection("marks")
                                                                                                 .document(document.getId())
                                                                                                 .update("mark", newData);
-
                                                                                     }
                                                                                 } else {
                                                                                     Log.d(TAG, "Error getting documents: ", task.getException());

@@ -4,31 +4,33 @@
     <string name="firebase_status_fmt">Firebase User: %s</string>
     <string name="login_status_fmt">Email User: %1$s (verified: %2$b)</string>
     <string name="hint_email">Email</string>
-    <string name="hint_password">Password</string>
-    <string name="auth_failed">Authentication failed</string>
+    <string name="hint_password">Parola</string>
+    <string name="auth_failed">Autentificarea a esuat</string>
     <string name="loading">Loading...</string>
+    <string name="sign_in"> SIGN IN</string>
+    <string name="verify_account">VERIFICA CONT</string>
 
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="menu_agenda">Agenda</string>
-    <string name="menu_news">News</string>
-    <string name="menu_grades">Grades</string>
+    <string name="menu_news">Noutati</string>
+    <string name="menu_grades">Note</string>
 
     <!--Agenda fragment-->
     <string name="logout_button">Logout</string>
-    <string name="calendar">My day: </string>
-    <string name="exams_list">My exams: </string>
-    <string name="modify_exam_date">Modify date</string>
-    <string name="check_exams_button">Check exams</string>
-    <string name="select_exam_professor"> Select exam: </string>
-    <string name="set_exam">Set Exam</string>
+    <string name="calendar">Ziua mea: </string>
+    <string name="exams_list">Examenele mele: </string>
+    <string name="modify_exam_date">Modifica data</string>
+    <string name="check_exams_button">Verifica examene</string>
+    <string name="select_exam_professor"> Alege examen: </string>
+    <string name="set_exam">Seteaza examen</string>
 
     <!--ExamChecking Activity-->
-    <string name="verify_exam">Verify exam</string>
-    <string name="propose_exam">Propose exam</string>
-    <string name="select_exam">Select exam for proposition: </string>
-    <string name="select_exam_day">Select a day: </string>
+    <string name="verify_exam">Verifica examen</string>
+    <string name="propose_exam">Propune examen</string>
+    <string name="select_exam">Selecteaza examen pentru propunere: </string>
+    <string name="select_exam_day">Selecteaza zi: </string>
     <string-array name="days_array">
         <item>Luni</item>
         <item>Marti</item>
@@ -39,21 +41,21 @@
 
 
     <!--News fragment-->
-    <string name="edit_news">Edit</string>
-    <string name="delete_news">Delete</string>
-    <string name="email_news_author">Email Professor</string>
+    <string name="edit_news">Modifica</string>
+    <string name="delete_news">Sterge</string>
+    <string name="email_news_author">Trimite email</string>
 
 
     <!--Professor Fragment-->
-    <string name="give_mark">Give mark</string>
-    <string name="email_student">Send email</string>
+    <string name="give_mark">Da nota</string>
+    <string name="email_student">Trimite email</string>
 
-    <string name="searchByCourse">Course</string>
-    <string name="searchByGroup">Group</string>
-    <string name="searchByLastName">Last Name</string>
-    <string name="searchByFirstName">First Name</string>
+    <string name="searchByCourse">Curs</string>
+    <string name="searchByGroup">Grupa</string>
+    <string name="searchByLastName">Nume</string>
+    <string name="searchByFirstName">Prenume</string>
     <!-- Student Fragment-->
-    <string name="email_professor"> Email Professor</string>
+    <string name="email_professor">Trimite email</string>
 
 </resources>
 

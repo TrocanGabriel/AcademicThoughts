@@ -49,20 +49,18 @@ import graduation.trocan.academicthoughts.model.TargetCheckbox;
 
 public class NewsFragment extends Fragment {
 
-    private static List<News> newsList = new ArrayList<>();
+    private  List<News> newsList = new ArrayList<>();
     private List<String> targets = new ArrayList<>();
-    private static RecyclerView recyclerView;
+    private  RecyclerView recyclerView;
     private RecyclerView targetRecyclerView;
-    private static String role;
-    private static String studentGroup;
-
-
-    private static NewsListAdapter mAdapter;
+    private  String role;
+    private  String studentGroup;
+    private  NewsListAdapter mAdapter;
     private TargetGroupsForNewsListAdapter mAdapterTargets;
     Context context = getActivity();
     public static final String TAG = "NewsFragment";
-    static FirebaseFirestore db = FirebaseFirestore.getInstance();
-    static FirebaseAuth mAuth = FirebaseAuth.getInstance();
+     FirebaseFirestore db = FirebaseFirestore.getInstance();
+     FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     private List<TargetCheckbox> currentSelectedItems = new ArrayList<>();
 
@@ -72,10 +70,9 @@ public class NewsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
-//        retrieveNews();
         View view = inflater.inflate(R.layout.fragment_news, container, false);
        recyclerView = view.findViewById(R.id.news_recycler_view);
-//       retrieveNews(context);
+       retrieveNews(getActivity());
 
 
         final FloatingActionButton floatingActionButton = view.findViewById(R.id.add_news_button);
@@ -128,7 +125,6 @@ public class NewsFragment extends Fragment {
                                             public void onClick(DialogInterface dialog, int id) {
                                                 EditText addedNews = promptView.findViewById(R.id.added_news);
                                                 String newData = addedNews.getText().toString();
-                                               // Toast.makeText(context, currentSelectedItems + " ",Toast.LENGTH_LONG).show();
                                                 ArrayList<String> targetGroups = new ArrayList<>();
                                                 for(int i = 0; i< currentSelectedItems.size(); i++){
                                                     TargetCheckbox checkBox = currentSelectedItems.get(i);
@@ -141,13 +137,12 @@ public class NewsFragment extends Fragment {
                                                 }
                                                 if (!newData.equals("")) {
                                                     Date date = new Date();
-                                                    //News news = new News(date, newData);
                                                     DocumentReference newsRef = db.collection("news").document();
                                                     Log.d(TAG, "NEWS FRAG TARGET" + targetGroups + "SELECTED " + currentSelectedItems );
                                                     Map<String, Object> dataNew = new HashMap<>();
                                                     dataNew.put("date", date);
                                                     dataNew.put("author", currentUser.getEmail());
-                                                    dataNew.put("text", newData);
+                                                    dataNew.put("text", newData.trim());
                                                     dataNew.put("target", Arrays.asList(targetGroups.toArray()));
                                                     dataNew.put("uid", newsRef.getId());
                                                     newsRef.set(dataNew);
@@ -174,7 +169,7 @@ public class NewsFragment extends Fragment {
    return view;
     }
 
-    public static void retrieveNews(final Context context){
+    public  void retrieveNews(final Context context){
 
         final FirebaseUser currentUser = mAuth.getCurrentUser();
 
@@ -313,20 +308,19 @@ public class NewsFragment extends Fragment {
         return  favorites;
     }
 
-    private static void getUserGroup(final Context context){
+    private  void getUserGroup(final Context context){
         FirebaseUser currentUser = mAuth.getCurrentUser();
         db.collection("students").document(currentUser.getEmail())
-                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 studentGroup = documentSnapshot.getString("group");
                 Log.d(TAG, "STUDENT GET ROLE " + studentGroup);
-
                 SharedPreferences sharedPref = context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putString("studentGroup", studentGroup);
                 editor.apply();
-
             }
         });
     }

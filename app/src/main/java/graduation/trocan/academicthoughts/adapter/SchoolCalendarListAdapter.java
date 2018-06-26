@@ -57,11 +57,21 @@ public class SchoolCalendarListAdapter extends RecyclerView.Adapter<SchoolCalend
 
         SchoolCalendar calendar = calendarList.get(position);
         holder.mTitleView.setText(calendar.getTitle());
-        holder.mTypeView.setText(calendar.getType());
+        StringBuilder type = new StringBuilder();
+        type.append(calendar.getType());
+        if(calendar.getWeek() != null){
+            type.append( " - Saptamana " + calendar.getWeek());
+        }
+        holder.mTypeView.setText(type);
         String hours = "Intre orele: " + calendar.getHours();
         holder.mHoursView.setText(hours);
-        String groups = "Grupe: " + calendar.getHours();
-        holder.mGroupsView.setText(groups);
+        StringBuilder groups = new StringBuilder();
+                groups.append("Grupe: ");
+                for(String group : calendar.getGroups()){
+                    groups.append(" " + group);
+                }
+
+        holder.mGroupsView.setText(groups.toString());
         final SchoolCalendar selectedCourse = calendarList.get(position);
 
     }

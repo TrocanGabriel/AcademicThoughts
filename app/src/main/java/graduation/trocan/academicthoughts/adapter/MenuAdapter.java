@@ -1,23 +1,20 @@
 package graduation.trocan.academicthoughts.adapter;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.util.Log;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import graduation.trocan.academicthoughts.MainActivity;
 import graduation.trocan.academicthoughts.R;
+import graduation.trocan.academicthoughts.fragment.AgendaFragment;
 import graduation.trocan.academicthoughts.fragment.NewsFragment;
 import graduation.trocan.academicthoughts.fragment.ProfessorFragment;
-import graduation.trocan.academicthoughts.fragment.AgendaFragment;
 import graduation.trocan.academicthoughts.fragment.StudentFragment;
 
 /**
@@ -43,25 +40,29 @@ public class MenuAdapter  extends FragmentPagerAdapter {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         String userEmail = currentUser.getEmail();
 
-        db.collection("roles").document(userEmail)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//        db.collection("roles").document(userEmail)
+//                .get()
+//                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//
+//                    @Override
+//                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                        if (task.isSuccessful()) {
+//                            DocumentSnapshot document = task.getResult();
+//                            if (document.exists()) {
+//                                roles = (document.getString("role"));
+//                            } else {
+//                                Log.d(TAG, "No such document");
+//                            }
+//                        } else {
+//                            Log.d(TAG, "get failed with ", task.getException());
+//                        }
+//                    }
+//
+//                });
 
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot document = task.getResult();
-                            if (document.exists()) {
-                                roles = (document.getString("role"));
-                            } else {
-                                Log.d(TAG, "No such document");
-                            }
-                        } else {
-                            Log.d(TAG, "get failed with ", task.getException());
-                        }
-                    }
+        SharedPreferences sharedPref = ((MainActivity)mContext).getPreferences(Context.MODE_PRIVATE);
+        String roles = sharedPref.getString("role","");
 
-                });
         if (position == 0) {
             return new AgendaFragment();
         } else if (position == 1) {
@@ -89,7 +90,5 @@ public class MenuAdapter  extends FragmentPagerAdapter {
         } else  {
             return mContext.getString(R.string.menu_grades);
         }
-
     }
-
 }

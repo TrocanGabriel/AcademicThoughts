@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -102,16 +103,22 @@ public class NewsChatActivity extends AppCompatActivity {
     }
 
     private void sendMessage(){
+
         FirebaseUser user = mAuth.getCurrentUser();
         Date date = new Date();
         EditText editText = findViewById(R.id.text_news_chat);
-        String message = editText.getText().toString();
-        NewsChat newDocument = new NewsChat(user.getEmail(),message,date);
-        db.collection("news")
-                .document(uid)
-                .collection("chat")
-                .add(newDocument);
-        editText.setText("");
+        String message = editText.getText().toString().trim();
+        if(!message.equals("")) {
+            NewsChat newDocument = new NewsChat(user.getEmail(), message, date);
+            db.collection("news")
+                    .document(uid)
+                    .collection("chat")
+                    .add(newDocument);
+            editText.setText("");
+        }
+        else {
+            Toast.makeText(getApplicationContext(), "Please enter a message!", Toast.LENGTH_SHORT).show();
+        }
 
     }
 

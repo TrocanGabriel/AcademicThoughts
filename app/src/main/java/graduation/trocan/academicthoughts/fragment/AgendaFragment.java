@@ -16,13 +16,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -51,6 +51,7 @@ public class AgendaFragment extends Fragment {
     private Button  logoutButton;
     private Button  checkExamsButton;
     private Spinner spinner;
+    private ProgressBar progressBar;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private SchoolCalendarListAdapter mSchoolCalendarAdapter;
     private AgendaExamListAdapter mAgendaExamAdapter;
@@ -74,12 +75,34 @@ public class AgendaFragment extends Fragment {
         logoutButton = view.findViewById(R.id.logout_button);
         checkExamsButton = view.findViewById(R.id.check_exams_button);
         spinner = view.findViewById(R.id.days_spinner);
+        progressBar = view.findViewById(R.id.progressBar);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.days_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         spinner.setAdapter(adapter);
+
+        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        final String role = sharedPref.getString("role","");
+
+        final String student = sharedPref.getString("studentUserGroup","");
+
+        retrieveExams(role, student);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String day =  adapterView.getItemAtPosition(i).toString();
+                Log.d(TAG, "day " + day);
+                getSchoolCalendar(day, role, student);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                Log.d("Agenda activity", "Nothing selected in days spinner");
+            }
+        });
 
         //TODO: SET TIME;
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
@@ -105,31 +128,20 @@ public class AgendaFragment extends Fragment {
 
         }
 
+        progressBar.setVisibility(View.GONE);
 
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String day =  adapterView.getItemAtPosition(i).toString();
-                Log.d(TAG, "day " + day);
-                getSchoolCalendar(day);
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                Log.d("Agenda activity", "Nothing selected in days spinner");
-            }
-        });
-
-
-        retrieveExams();
 
 
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
             mAuth.signOut();
-            startActivity(new Intent(getActivity(), LoginActivity.class));
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+
             getActivity().finish();
             }
         });
@@ -144,40 +156,36 @@ public class AgendaFragment extends Fragment {
 
     }
 
-    private void retrieveExams(){
-        getUserRole();
-        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-        String role = sharedPref.getString("role","");
-        final String studentUser = sharedPref.getString("studentUserGroup", "");
+    private void retrieveExams(final String role, final String studentUser){
+
         Log.d(TAG, " ROLE EXAM " + role);
 
-        if(role.equals("professor")){
-
+        if (role.equals("professor")) {
             Log.d(TAG, "PROFESSOR ROLE EXAM");
             db.collection("exams")
-                    .whereEqualTo("professor",currentUser.getEmail())
+                    .whereEqualTo("professor", currentUser.getEmail())
                     .whereEqualTo("set", true)
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                           if(task.isSuccessful()){
-                               agendaExamList = new ArrayList<>();
-                               for(QueryDocumentSnapshot queryDocumentSnapshot :task.getResult()){
-                                   AgendaExam exam = queryDocumentSnapshot.toObject(AgendaExam.class);
-                                   agendaExamList.add(exam);
-                               }
+                            if (task.isSuccessful()) {
+                                agendaExamList = new ArrayList<>();
+                                for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
+                                    AgendaExam exam = queryDocumentSnapshot.toObject(AgendaExam.class);
+                                    agendaExamList.add(exam);
+                                }
 
-                               mAgendaExamAdapter = new AgendaExamListAdapter(agendaExamList);
-                               RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-                               examsRecyclerView.setLayoutManager(mLayoutManager);
-                               examsRecyclerView.setItemAnimator(new DefaultItemAnimator());
-                               examsRecyclerView.setAdapter(mAgendaExamAdapter);
-                           }
+                                mAgendaExamAdapter = new AgendaExamListAdapter(agendaExamList);
+                                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+                                examsRecyclerView.setLayoutManager(mLayoutManager);
+                                examsRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                                examsRecyclerView.setAdapter(mAgendaExamAdapter);
+                            }
                         }
                     });
 
-        } else if (role.equals("student")){
+        } else if (role.equals("student")) {
 
             Log.d(TAG, "STUDENT ROLE EXAM");
             db.collection("exams")
@@ -186,12 +194,12 @@ public class AgendaFragment extends Fragment {
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if(task.isSuccessful()){
+                            if (task.isSuccessful()) {
                                 agendaExamList = new ArrayList<>();
-                                for(QueryDocumentSnapshot queryDocumentSnapshot :task.getResult()){
+                                for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
                                     AgendaExam exam = queryDocumentSnapshot.toObject(AgendaExam.class);
                                     Log.d(TAG, "STUDENT ROLE EXAM email " + studentUser);
-                                    if(exam.getGroups().contains(studentUser)) {
+                                    if (exam.getGroups().contains(studentUser)) {
                                         agendaExamList.add(exam);
 
                                     }
@@ -209,11 +217,8 @@ public class AgendaFragment extends Fragment {
                     });
         }
     }
-    private void getSchoolCalendar(String day) {
-        getUserRole();
-        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-        String role = sharedPref.getString("role","");
-        final String studentUser = sharedPref.getString("studentUserGroup", "");
+    private void getSchoolCalendar(final String day, final String role, final String studentUser) {
+
         if(role.equals("professor")) {
             Log.d(TAG, "PROFESSOR ROLE SchoolCalendar");
             db.collection("calendar")
@@ -280,73 +285,4 @@ public class AgendaFragment extends Fragment {
                     });
         }
     }
-
-    private void getUserRole() {
-
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-
-        db.collection("roles").document(currentUser.getEmail())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot document = task.getResult();
-                            if (document.exists()) {
-                                if(document.getString("role").equals("student")) {
-                                    getStudent();
-                                    Context context = getActivity();
-                                    SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-                                    SharedPreferences.Editor editor = sharedPref.edit();
-                                    editor.putString("role", "student");
-                                    editor.apply();
-                                }
-                                else {
-                                    Context context = getActivity();
-                                    SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-                                    SharedPreferences.Editor editor = sharedPref.edit();
-                                    editor.putString("role", "professor");
-                                    editor.apply();
-
-                                }
-                                Log.d(TAG, document.getString("role") + " role " );
-                            } else {
-                                Log.d(TAG, "No such document");
-                            }
-                        } else {
-                            Log.d(TAG, "get failed with ", task.getException());
-                        }
-                    }
-                });
-
-
-    }
-
-    private void getStudent() {
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-
-        db.collection("students")
-                .document(currentUser.getEmail())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if(task.isSuccessful()){
-                            DocumentSnapshot documentSnapshot = task.getResult();
-                            Context context = getActivity();
-                            String data  = documentSnapshot.getString("group");
-                            SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editor = sharedPref.edit();
-                            editor.putString("studentUserGroup", data);
-                            editor.apply();
-                        }
-                        else {
-                            Log.d(TAG, "PROFESSOR ROLE EXAM register  FAIL" + studentUserGroup);
-
-                        }
-                    }
-                });
-    }
-
-
 }

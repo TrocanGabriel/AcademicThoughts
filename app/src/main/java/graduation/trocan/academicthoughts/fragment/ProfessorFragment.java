@@ -127,19 +127,19 @@ public class ProfessorFragment extends Fragment {
 
 
                                                     switch (selectedCriteria.getText().toString()) {
-                                                        case "Group":
+                                                        case "Grupa":
                                                             searchTypes.put("Group",searchData);
                                                             break;
 
-                                                        case "Course":
+                                                        case "Curs":
                                                        searchTypes.put("Course",searchData);
                                                             break;
 
-                                                        case "Last Name":
+                                                        case "Nume":
                                                             searchTypes.put("LastName",searchData);
                                                             break;
 
-                                                        case "First Name":
+                                                        case "Prenume":
                                                             searchTypes.put("FirstName",searchData);
                                                             break;
                                                     }
@@ -193,18 +193,18 @@ public class ProfessorFragment extends Fragment {
         Log.d(TAG + " map", searchTypes.toString());
         while(iterator.hasNext()){
             ProfessorMark mark = iterator.next();
-            if  (searchTypes.get("Course") != null && !mark.getCourse().equals(searchTypes.get("Course"))){
+            if  (searchTypes.get("Course") != null && !mark.getCourse().toUpperCase().trim().equals(searchTypes.get("Course").toUpperCase().trim())){
                 iterator.remove();
             }
-            else if(searchTypes.get("Group") != null && !mark.getGroup().equals(searchTypes.get("Group"))){
-                iterator.remove();
-
-            }
-            else if (searchTypes.get("FirstName") != null && !mark.getFirst_name().equals(searchTypes.get("FirstName"))){
+            else if(searchTypes.get("Group") != null && !mark.getGroup().toUpperCase().trim().equals(searchTypes.get("Group").toUpperCase().trim())){
                 iterator.remove();
 
             }
-            else if(searchTypes.get("LastName") != null && !mark.getLast_name().equals(searchTypes.get("LastName"))  ){
+            else if (searchTypes.get("FirstName") != null && !mark.getFirst_name().toUpperCase().trim().equals(searchTypes.get("FirstName").toUpperCase().trim())){
+                iterator.remove();
+
+            }
+            else if(searchTypes.get("LastName") != null && !mark.getLast_name().toUpperCase().trim().equals(searchTypes.get("LastName").toUpperCase().trim())){
                 iterator.remove();
 
             }

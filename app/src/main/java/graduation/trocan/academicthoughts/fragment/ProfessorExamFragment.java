@@ -39,7 +39,6 @@ public class ProfessorExamFragment extends Fragment {
     FirebaseUser currentUser = mAuth.getCurrentUser();
     private  List<String> courses;
     private List<AgendaExam> allExams;
-    private String selectedDateString;
     private  Spinner courseSpinner;
     private  String courseSelected;
     private static final String TAG = "PROFESSOR EXAM";
@@ -57,7 +56,6 @@ public class ProfessorExamFragment extends Fragment {
 
         retrieveAllExams();
 
-        // Inflate the layout for this fragment
          final View view = inflater.inflate(R.layout.fragment_professor_exam, container, false);
         final TextView selectedDate = view.findViewById(R.id.professor_exam_date_selected);
         Button button = view.findViewById(R.id.button_professor_set_date);
@@ -109,8 +107,6 @@ public class ProfessorExamFragment extends Fragment {
                             ArrayAdapter<String> categoriesAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, courses);
                             courseSpinner.setAdapter(categoriesAdapter);
                             Log.d(TAG, "professor ROLE EXAM LIST CALENDAR" + courses);
-
-
                         }
                     }
                 })
@@ -143,7 +139,4 @@ public class ProfessorExamFragment extends Fragment {
                     }
                 });
     }
-
-
-
 }
