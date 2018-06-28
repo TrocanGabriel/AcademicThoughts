@@ -1,8 +1,10 @@
 package graduation.trocan.academicthoughts;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -38,7 +40,7 @@ import graduation.trocan.academicthoughts.model.ProposedDays;
 public class ExamsCheckingActivity extends AppCompatActivity  {
 
     private static List<AgendaExam> allExams = new ArrayList<>();
-    private List<Event> events = new ArrayList<>();
+    private static List<Event> events = new ArrayList<>();
     private SimpleDateFormat dateFormatMonth = new SimpleDateFormat("MMMM- yyyy", Locale.getDefault());
 
     private static FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -48,7 +50,7 @@ public class ExamsCheckingActivity extends AppCompatActivity  {
     private static final String TAG = "EXAMSCHECKING";
     private static ArrayList<ProposedDays> propDays;
     private static Date selectedDate;
-    private String role;
+    public static final String PREFS_NAME = "NEWS_FRAGMENT";
     SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
 
@@ -59,42 +61,24 @@ public class ExamsCheckingActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exams_checking);
 
-            db.collection("roles")
-                    .document(currentUser.getEmail())
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                DocumentSnapshot document = task.getResult();
-                                if (document.exists()) {
-                                    if(document.getString("role").equals("student")) {
-                                        role = "student";
-                                        StudentExamFragment    firstFragment = new StudentExamFragment();
-                                        getSupportFragmentManager().beginTransaction()
-                                                .replace(R.id.fragment_container, firstFragment)
-                                                .commitAllowingStateLoss();
-                                    }
-                                    if(document.getString("role").equals("professor"))  {
-                                        role = "professor";
-                                        ProfessorExamFragment     firstFragment = new ProfessorExamFragment();
-                                        getSupportFragmentManager().beginTransaction()
-                                                .replace(R.id.fragment_container, firstFragment)
-                                                .commitAllowingStateLoss();
-                                    }
+        retrieveAllExams();
 
-                                    Log.d(TAG, document.getString("role") + "role " );
-                                } else {
-                                    Log.d(TAG, "No such document");
-                                }
-                            } else {
-                                Log.d(TAG, "get failed with ", task.getException());
-                            }
-                        }
-                    });
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        final String role = sharedPref.getString("role","");
+        Log.d(TAG, role + "USEROLE");
+        if(role.equals("student")){
+            StudentExamFragment    firstFragment = new StudentExamFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, firstFragment)
+                    .commitAllowingStateLoss();
+        } else if(role.equals("professor")) {
+            ProfessorExamFragment     firstFragment = new ProfessorExamFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, firstFragment)
+                    .commitAllowingStateLoss();
+        }
 
 
-    retrieveAllExams();
         final ActionBar actionBar = getSupportActionBar();
        compactCalendarView =  findViewById(R.id.compactcalendar_view);
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -132,8 +116,20 @@ public class ExamsCheckingActivity extends AppCompatActivity  {
                     if(countExams == 0 && countProposedExams != 0){
                         Toast.makeText(context, "Exam: " + events.get(0).getData().toString() + " proposed by " + events.size() + " students!", Toast.LENGTH_SHORT).show();
 
-                    } else if(countExams == 1){
+                    } else if(countExams == 1 && countProposedExams == 0){
                         Toast.makeText(context, "Exam: " + events.get(0).getData().toString() , Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        int count = 0;
+                        for(Event event : events){
+                            if(event.getColor() == Color.GREEN) {
+                                Toast.makeText(context, "Exam: " + event.getData().toString(), Toast.LENGTH_SHORT).show();
+                            } else {
+                                count++;
+                            }
+                        }
+                        Toast.makeText(context, "Exam: " + events.get(0).getData().toString() + " proposed by " + count + " students!", Toast.LENGTH_SHORT).show();
+
                     }
             }
                 else {
@@ -152,10 +148,6 @@ public class ExamsCheckingActivity extends AppCompatActivity  {
 
     public static void retrieveAllExams(){
 
-        for(AgendaExam exam : allExams){
-            compactCalendarView.removeAllEvents();
-            break;
-        }
         Log.d(TAG, "ALLEXAMS");
         db.collection("exams")
                 .get()
@@ -192,9 +184,17 @@ public class ExamsCheckingActivity extends AppCompatActivity  {
     public static void updateCalendar(String course, String userGroup){
         Log.d(TAG, "ERROR CHECK EXAM COURSE");
 
-        for(final AgendaExam exam : allExams){
-            if((exam.getGroups().contains(userGroup) || exam.getProfessor().equals(userGroup)) && exam.getCourse().equals(course)){
-             String   uid = exam.getUid();
+        AgendaExam selectExam = null;
+        for( AgendaExam exam : allExams) {
+            Log.d("UPDATE CALENDAR", "course " + course + "  group " + userGroup);
+            if ((exam.getGroups().contains(userGroup) || exam.getProfessor().equals(userGroup)) && exam.getCourse().equals(course)) {
+                selectExam = exam;
+                break;
+            }
+        }
+            final AgendaExam selectedExam = selectExam;
+             String   uid = selectedExam.getUid();
+
                 db.collection("exams")
                         .document(uid)
                         .collection("proposedDays")
@@ -203,35 +203,29 @@ public class ExamsCheckingActivity extends AppCompatActivity  {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if(task.isSuccessful()){
-                                    if(propDays != null) {
-                                        for (ProposedDays day : propDays) {
-                                            compactCalendarView.removeEvents(day.getDate());
-                                        }
-                                    }
+                                    compactCalendarView.removeAllEvents();
                                      propDays = new ArrayList<>();
                                     for(DocumentSnapshot doc : task.getResult()){
                                         ProposedDays prop = doc.toObject(ProposedDays.class);
                                         propDays.add(prop);
-                                    }
-                                    for (ProposedDays day : propDays){
-                                        Log.d(TAG, "EXAM PROPOSED DATE SHOW " + day.getDate().getTime());
-                                        Event event = new Event(Color.RED, day.getDate().getTime(),exam.getCourse() + " with " +exam.getProfessor());
+                                        Log.d(TAG, "EXAM PROPOSED DATE SHOW " + prop.getDate().getTime());
+                                        Event event = new Event(Color.RED, prop.getDate().getTime(),selectedExam.getCourse() + " with " +selectedExam.getProfessor());
 
                                         compactCalendarView.addEvent(event);
                                     }
-
-
-
+                                    retrieveAllExams();
                                 }
                             }
-                        });
+                        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "NO PROPOSED DAYS FOR COURSE");
 
-                break;
+                    }
+                });
 
-            }
 
-
-        }
 
 
 }
@@ -302,6 +296,7 @@ public class ExamsCheckingActivity extends AppCompatActivity  {
 
     public static void setExam(String courseSelected){
         final String[] examUID = new String[1];
+        compactCalendarView.removeAllEvents();
         db.collection("exams")
                 .whereEqualTo("course",courseSelected)
                 .whereEqualTo("professor",currentUser.getEmail())
@@ -347,6 +342,7 @@ public class ExamsCheckingActivity extends AppCompatActivity  {
                                         }
                                     });
 
+                            retrieveAllExams();
                         }
                     }
                 })
@@ -357,7 +353,8 @@ public class ExamsCheckingActivity extends AppCompatActivity  {
                     }
                 });
 
-       ExamsCheckingActivity.retrieveAllExams();
+
+
     }
 
 

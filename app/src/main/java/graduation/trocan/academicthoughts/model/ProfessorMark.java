@@ -8,16 +8,19 @@ public class ProfessorMark {
     private String last_name;
     private String group;
     private int mark;
+    private String uid;
 
     public ProfessorMark( ) {
     }
 
-    public ProfessorMark(String course, String email, String first_name, String last_name, String group, int mark) {
+    public ProfessorMark(String course, String email, String first_name, String last_name, String group, int mark, String uid) {
+        this.course = course;
         this.email = email;
         this.first_name = first_name;
         this.last_name = last_name;
-        this.mark = mark;
         this.group = group;
+        this.mark = mark;
+        this.uid = uid;
     }
 
     public ProfessorMark(String course, String email, String first_name, String last_name, String group) {
@@ -66,4 +69,12 @@ public class ProfessorMark {
     public String getCourse() {return course;}
 
     public void setCourse(String course) {this.course = course;}
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -82,14 +83,14 @@ public class MainActivity extends AppCompatActivity {
                                         callback.userRole("");
                                     }
                                 });
-                                SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+                                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                                 SharedPreferences.Editor editor = sharedPref.edit();
                                 editor.putString("role", "student");
                                 editor.apply();
                             }
                             else {
 
-                                SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+                                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                                 SharedPreferences.Editor editor = sharedPref.edit();
                                 editor.putString("role", "professor");
                                 editor.apply();
@@ -97,12 +98,6 @@ public class MainActivity extends AppCompatActivity {
 
                             }
 
-//                            if (document.exists()) {
-//                                callback.userRole(document.getString("role"));
-//                                Log.d(TAG, document.getString("role") + " role " );
-//                            } else {
-//                                Log.d(TAG, "No such document");
-//                            }
                         } else {
                             Log.d("", "get failed with ", task.getException());
                         }

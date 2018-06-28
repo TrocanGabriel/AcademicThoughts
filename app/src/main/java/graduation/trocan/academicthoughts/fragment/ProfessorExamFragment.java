@@ -45,16 +45,9 @@ public class ProfessorExamFragment extends Fragment {
 
 
     @Override
-    public void onStart() {
-        super.onStart();
-
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
 
-        retrieveAllExams();
 
          final View view = inflater.inflate(R.layout.fragment_professor_exam, container, false);
         final TextView selectedDate = view.findViewById(R.id.professor_exam_date_selected);
@@ -68,6 +61,8 @@ public class ProfessorExamFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 courseSelected = parent.getItemAtPosition(position).toString();
+                Log.d("UPDATE CALENDAR PROF", courseSelected + " courseSelected");
+//                if(position != 0 )
                 ExamsCheckingActivity.updateCalendar(courseSelected, currentUser.getEmail());
             }
 
@@ -82,7 +77,6 @@ public class ProfessorExamFragment extends Fragment {
             @Override
             public void onClick(View v) {
                ExamsCheckingActivity.setExam(courseSelected);
-
             }
         });
 
@@ -118,25 +112,4 @@ public class ProfessorExamFragment extends Fragment {
                 });
     }
 
-    private void retrieveAllExams(){
-
-        Log.d(TAG, "ALLEXAMS");
-        db.collection("exams")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()){
-                            allExams  = new ArrayList<>();
-                            for(QueryDocumentSnapshot doc : task.getResult()){
-                                AgendaExam agendaExam = doc.toObject(AgendaExam.class);
-                                allExams.add(agendaExam);
-                                Log.d(TAG, " CHECK EXAM COURSE " + agendaExam.getCourse());
-                            }
-                        } else {
-                            Log.d(TAG, "ERROR CHECK EXAM COURSE");
-                        }
-                    }
-                });
-    }
 }

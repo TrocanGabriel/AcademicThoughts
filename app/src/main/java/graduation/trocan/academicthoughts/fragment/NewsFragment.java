@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -74,39 +75,43 @@ public class NewsFragment extends Fragment {
        recyclerView = view.findViewById(R.id.news_recycler_view);
        retrieveNews(getActivity());
 
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        final String userRole = sharedPref.getString("role","");
+        Log.d(TAG, "USERROLENEWS " + userRole);
+
 
         final FloatingActionButton floatingActionButton = view.findViewById(R.id.add_news_button);
         final FirebaseUser currentUser = mAuth.getCurrentUser();
-        db.collection("roles").document(currentUser.getEmail())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot document = task.getResult();
-                            if (document.exists()) {
-                                Context context = getActivity();
-                              if(document.getString("role").equals("student")) {
-                                  floatingActionButton.setVisibility(View.GONE);
-                                  saveFavorites(context, "student");
-                              }
-                              else {
-                                  saveFavorites(context, "professor");
-
-                              }
-                                Log.d(TAG, document.getString("role") + "role " );
-                            } else {
-                                Log.d(TAG, "No such document");
-                            }
-                        } else {
-                            Log.d(TAG, "get failed with ", task.getException());
-                        }
-                    }
-                });
+        if(userRole.equals("student")) {
+            floatingActionButton.setVisibility(View.GONE);
+        }
+//        db.collection("roles").document(currentUser.getEmail())
+//                .get()
+//                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                        if (task.isSuccessful()) {
+//                            DocumentSnapshot document = task.getResult();
+//                            if (document.exists()) {
+//                                Context context = getActivity();
+//                              if(document.getString("role").equals("student")) {
+//                                  saveFavorites(context, "student");
+//                              }
+//                              else {
+//                                  saveFavorites(context, "professor");
+//
+//                              }
+//                                Log.d(TAG, document.getString("role") + "role " );
+//                            } else {
+//                                Log.d(TAG, "No such document");
+//                            }
+//                        } else {
+//                            Log.d(TAG, "get failed with ", task.getException());
+//                        }
+//                    }
+//                });
             if(floatingActionButton.getVisibility() != View.GONE) {
                 Context contextRole = getActivity();
-                String role = getFavorites(contextRole);
-
                 floatingActionButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(final View view) {

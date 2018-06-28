@@ -123,7 +123,7 @@ public class ProfessorMarkListAdapter extends RecyclerView.Adapter<ProfessorMark
                                                                 DocumentReference profMarkRef = db.collection("professors")
                                                                         .document(currentUser.getEmail())
                                                                         .collection("myStudents")
-                                                                        .document(modifiedData.getEmail());
+                                                                        .document(modifiedData.getUid());
                                                                 profMarkRef.update("mark", newData);
                                                                 professorMarkList.get(professorMarkList.indexOf(modifiedData)).setMark(newData);
                                                                 db.collection("students")

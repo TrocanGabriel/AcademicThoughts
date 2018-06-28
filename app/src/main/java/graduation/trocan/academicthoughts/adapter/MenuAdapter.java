@@ -40,25 +40,6 @@ public class MenuAdapter  extends FragmentPagerAdapter {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         String userEmail = currentUser.getEmail();
 
-//        db.collection("roles").document(userEmail)
-//                .get()
-//                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//
-//                    @Override
-//                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                        if (task.isSuccessful()) {
-//                            DocumentSnapshot document = task.getResult();
-//                            if (document.exists()) {
-//                                roles = (document.getString("role"));
-//                            } else {
-//                                Log.d(TAG, "No such document");
-//                            }
-//                        } else {
-//                            Log.d(TAG, "get failed with ", task.getException());
-//                        }
-//                    }
-//
-//                });
 
         SharedPreferences sharedPref = ((MainActivity)mContext).getPreferences(Context.MODE_PRIVATE);
         String roles = sharedPref.getString("role","");
