@@ -194,37 +194,41 @@ public class ExamsCheckingActivity extends AppCompatActivity  {
         }
             final AgendaExam selectedExam = selectExam;
              String   uid = selectedExam.getUid();
+             if(uid != null) {
 
-                db.collection("exams")
-                        .document(uid)
-                        .collection("proposedDays")
-                        .get()
-                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if(task.isSuccessful()){
-                                    compactCalendarView.removeAllEvents();
+                 db.collection("exams")
+                         .document(uid)
+                         .collection("proposedDays")
+                         .get()
+                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                             @Override
+                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                 if (task.isSuccessful()) {
+                                     compactCalendarView.removeAllEvents();
                                      propDays = new ArrayList<>();
-                                    for(DocumentSnapshot doc : task.getResult()){
-                                        ProposedDays prop = doc.toObject(ProposedDays.class);
-                                        propDays.add(prop);
-                                        Log.d(TAG, "EXAM PROPOSED DATE SHOW " + prop.getDate().getTime());
-                                        Event event = new Event(Color.RED, prop.getDate().getTime(),selectedExam.getCourse() + " with " +selectedExam.getProfessor());
+                                     for (DocumentSnapshot doc : task.getResult()) {
+                                         ProposedDays prop = doc.toObject(ProposedDays.class);
+                                         propDays.add(prop);
+                                         Log.d(TAG, "EXAM PROPOSED DATE SHOW " + prop.getDate().getTime());
+                                         Event event = new Event(Color.RED, prop.getDate().getTime(), selectedExam.getCourse() + " with " + selectedExam.getProfessor());
 
-                                        compactCalendarView.addEvent(event);
-                                    }
-                                    retrieveAllExams();
-                                }
-                            }
-                        })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG, "NO PROPOSED DAYS FOR COURSE");
+                                         compactCalendarView.addEvent(event);
+                                     }
+                                     retrieveAllExams();
+                                 }
+                             }
+                         })
+                         .addOnFailureListener(new OnFailureListener() {
+                             @Override
+                             public void onFailure(@NonNull Exception e) {
+                                 Log.d(TAG, "NO PROPOSED DAYS FOR COURSE");
 
-                    }
-                });
-
+                             }
+                         });
+             }
+             else {
+//                 Toast.makeText(, "Nu sunt examene ramase pentru propuneri", Toast.LENGTH_SHORT).show();
+             }
 
 
 
@@ -232,7 +236,7 @@ public class ExamsCheckingActivity extends AppCompatActivity  {
 
     public static void saveProposedDate(String s, String userGroup, String courseSelected) {
 
-        if (!s.equals("No date selected")) {
+        if (!s.equals("")) {
 
 
             Boolean valid = false;

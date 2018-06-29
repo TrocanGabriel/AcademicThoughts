@@ -1,7 +1,9 @@
 package graduation.trocan.academicthoughts.fragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -18,7 +20,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -29,7 +30,8 @@ import java.util.List;
 import graduation.trocan.academicthoughts.ExamsCheckingActivity;
 import graduation.trocan.academicthoughts.R;
 import graduation.trocan.academicthoughts.model.AgendaExam;
-import graduation.trocan.academicthoughts.model.Student;
+
+import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 
 public class StudentExamFragment extends Fragment {
@@ -48,13 +50,15 @@ public class StudentExamFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        retrieveUser();
         retrieveAllExams();
 
        final View view = inflater.inflate(R.layout.fragment_student_exam, container, false);
         final TextView selectedDate = view.findViewById(R.id.student_exam_date_selected);
         Button button = view.findViewById(R.id.button_student_send_date);
         courseSpinner = view.findViewById(R.id.course_spinner_student);
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        userGroup = sharedPref.getString("studentUserGroup","");
 
         retrieveStudentExams(getContext());
 
@@ -102,21 +106,21 @@ public class StudentExamFragment extends Fragment {
                 });
     }
 
-    private void retrieveUser(){
-        db.collection("students")
-                .document(currentUser.getEmail())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if(task.isSuccessful()){
-                            DocumentSnapshot doc = task.getResult();
-                            Student student = doc.toObject(Student.class);
-                            userGroup = student.getGroup();
-                        }
-                    }
-                });
-    }
+//    private void retrieveUser(){
+//        db.collection("students")
+//                .document(currentUser.getEmail())
+//                .get()
+//                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                        if(task.isSuccessful()){
+//                            DocumentSnapshot doc = task.getResult();
+//                            Student student = doc.toObject(Student.class);
+//                            userGroup = student.getGroup();
+//                        }
+//                    }
+//                });
+//    }
 
     public void retrieveStudentExams(final Context context) {
 

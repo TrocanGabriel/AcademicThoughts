@@ -1,6 +1,5 @@
 package graduation.trocan.academicthoughts;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -120,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
                         if(task.isSuccessful()){
                             DocumentSnapshot documentSnapshot = task.getResult();
                             String data  = documentSnapshot.getString("group");
-                            SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+                            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                             SharedPreferences.Editor editor = sharedPref.edit();
                             editor.putString("studentUserGroup", data);
                             editor.apply();

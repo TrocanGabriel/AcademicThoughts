@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -41,6 +42,8 @@ import java.util.Map;
 import graduation.trocan.academicthoughts.R;
 import graduation.trocan.academicthoughts.adapter.ProfessorMarkListAdapter;
 import graduation.trocan.academicthoughts.model.ProfessorMark;
+
+import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 
 public class ProfessorFragment extends Fragment {
@@ -254,8 +257,7 @@ public class ProfessorFragment extends Fragment {
         SharedPreferences.Editor editor;
 
 
-        settings = context.getSharedPreferences(PREFS_NAME,
-                Context.MODE_PRIVATE);
+        settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         editor = settings.edit();
 
         Gson gson = new Gson();
@@ -270,8 +272,7 @@ public class ProfessorFragment extends Fragment {
         SharedPreferences settings;
         List<ProfessorMark> favorites;
 
-        settings = context.getSharedPreferences(PREFS_NAME,
-                Context.MODE_PRIVATE);
+        settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         if (settings.contains(FAVORITES)) {
             String jsonFavorites = settings.getString(FAVORITES, null);

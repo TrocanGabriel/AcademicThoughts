@@ -47,6 +47,8 @@ import graduation.trocan.academicthoughts.model.News;
 import graduation.trocan.academicthoughts.model.Professor;
 import graduation.trocan.academicthoughts.model.TargetCheckbox;
 
+import static com.firebase.ui.auth.AuthUI.getApplicationContext;
+
 
 public class NewsFragment extends Fragment {
 
@@ -189,23 +191,23 @@ public class NewsFragment extends Fragment {
                 if( task.isSuccessful()){
                     newsList = new ArrayList<>();
 
-                    role = getFavorites(context);
-                    SharedPreferences sharedPref = context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE);
+                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                    final String userRole = sharedPref.getString("role","");
                    String studentGroup2 = sharedPref.getString("studentGroup","");
                     Log.d(TAG, "NEWS ROLE studentGroup : " + studentGroup2);
-                    Log.d(TAG, "NEWS ROLE role : " + role);
+                    Log.d(TAG, "NEWS ROLE role : " + userRole);
 
 
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         News newAdded = document.toObject(News.class);
 
                         if(newAdded.getAuthor().equals(currentUser.getEmail())
-                                && role.equals("professor")) {
+                                && userRole.equals("professor")) {
                         newAdded.setUid(document.getId());
                         Log.d(TAG, "UID : " + newAdded.getUid());
                         newsList.add(newAdded);
 
-                        } else if(role.equals("student") && newAdded.getTarget().contains(studentGroup2)) {
+                        } else if(userRole.equals("student") && newAdded.getTarget().contains(studentGroup2)) {
                             newAdded.setUid(document.getId());
                             Log.d(TAG, "UID : " + newAdded.getUid());
                             newsList.add(newAdded);
@@ -282,8 +284,7 @@ public class NewsFragment extends Fragment {
         SharedPreferences settings;
         SharedPreferences.Editor editor;
 
-        settings = context.getSharedPreferences(PREFS_NAME,
-                Context.MODE_PRIVATE);
+        settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         editor = settings.edit();
 
         Gson gson = new Gson();
@@ -294,24 +295,23 @@ public class NewsFragment extends Fragment {
         editor.apply();
     }
 
-    public static String getFavorites(Context context) {
-        SharedPreferences settings;
-       String favorites;
-
-        settings = context.getSharedPreferences(PREFS_NAME,
-                Context.MODE_PRIVATE);
-
-        if (settings.contains(FAVORITES)) {
-            String jsonFavorites = settings.getString(FAVORITES, null);
-            Gson gson = new Gson();
-            favorites = gson.fromJson(jsonFavorites,
-                    String.class);
-
-
-        } else
-            return null;
-        return  favorites;
-    }
+//    public static String getFavorites(Context context) {
+//        SharedPreferences settings;
+//       String favorites;
+//
+//        settings =PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//
+//        if (settings.contains(FAVORITES)) {
+//            String jsonFavorites = settings.getString(FAVORITES, null);
+//            Gson gson = new Gson();
+//            favorites = gson.fromJson(jsonFavorites,
+//                    String.class);
+//
+//
+//        } else
+//            return null;
+//        return  favorites;
+//    }
 
     private  void getUserGroup(final Context context){
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -322,7 +322,7 @@ public class NewsFragment extends Fragment {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 studentGroup = documentSnapshot.getString("group");
                 Log.d(TAG, "STUDENT GET ROLE " + studentGroup);
-                SharedPreferences sharedPref = context.getSharedPreferences(PREFS_NAME, context.MODE_PRIVATE);
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putString("studentGroup", studentGroup);
                 editor.apply();

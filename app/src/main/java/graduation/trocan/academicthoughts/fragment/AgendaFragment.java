@@ -1,9 +1,9 @@
 package graduation.trocan.academicthoughts.fragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -39,6 +39,8 @@ import graduation.trocan.academicthoughts.adapter.AgendaExamListAdapter;
 import graduation.trocan.academicthoughts.adapter.SchoolCalendarListAdapter;
 import graduation.trocan.academicthoughts.model.AgendaExam;
 import graduation.trocan.academicthoughts.model.SchoolCalendar;
+
+import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 
 public class AgendaFragment extends Fragment {
@@ -83,7 +85,7 @@ public class AgendaFragment extends Fragment {
 
         spinner.setAdapter(adapter);
 
-        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         final String role = sharedPref.getString("role","");
 
         final String student = sharedPref.getString("studentUserGroup","");

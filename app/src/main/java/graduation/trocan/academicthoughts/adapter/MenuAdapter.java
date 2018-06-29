@@ -2,6 +2,7 @@ package graduation.trocan.academicthoughts.adapter;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -10,12 +11,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import graduation.trocan.academicthoughts.MainActivity;
 import graduation.trocan.academicthoughts.R;
 import graduation.trocan.academicthoughts.fragment.AgendaFragment;
 import graduation.trocan.academicthoughts.fragment.NewsFragment;
 import graduation.trocan.academicthoughts.fragment.ProfessorFragment;
 import graduation.trocan.academicthoughts.fragment.StudentFragment;
+
+import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 /**
  * Created by Gabi on 15/04/2018.
@@ -41,7 +43,7 @@ public class MenuAdapter  extends FragmentPagerAdapter {
         String userEmail = currentUser.getEmail();
 
 
-        SharedPreferences sharedPref = ((MainActivity)mContext).getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String roles = sharedPref.getString("role","");
 
         if (position == 0) {
