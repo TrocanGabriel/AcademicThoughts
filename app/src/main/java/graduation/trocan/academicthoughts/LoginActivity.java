@@ -165,13 +165,13 @@ public class LoginActivity extends AppCompatActivity implements
 
             Log.e(TAG, "updateUI failed: verification");
             Toast.makeText(LoginActivity.this,
-                    "Please verify email!",
+                    "Te rog verifica emailul!",
                     Toast.LENGTH_SHORT).show();
 
         } else {
             Log.e(TAG, "updateUI failed: user");
             Toast.makeText(LoginActivity.this,
-                    "Please enter valid user!",
+                    "Te rog sa introduci un user valid!",
                     Toast.LENGTH_SHORT).show();
         }
     }

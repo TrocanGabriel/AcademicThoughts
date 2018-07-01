@@ -114,27 +114,27 @@ public class ExamsCheckingActivity extends AppCompatActivity  {
                         }
                     }
                     if(countExams == 0 && countProposedExams != 0){
-                        Toast.makeText(context, "Exam: " + events.get(0).getData().toString() + " proposed by " + events.size() + " students!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Examen: " + events.get(0).getData().toString() + " propus de " + events.size() + " studenti!", Toast.LENGTH_SHORT).show();
 
                     } else if(countExams == 1 && countProposedExams == 0){
-                        Toast.makeText(context, "Exam: " + events.get(0).getData().toString() , Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Examen: " + events.get(0).getData().toString() , Toast.LENGTH_SHORT).show();
                     }
                     else {
                         int count = 0;
                         for(Event event : events){
                             if(event.getColor() == Color.GREEN) {
-                                Toast.makeText(context, "Exam: " + event.getData().toString(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context, "Examen: " + event.getData().toString(), Toast.LENGTH_SHORT).show();
                             } else {
                                 count++;
                             }
                         }
-                        Toast.makeText(context, "Exam: " + events.get(0).getData().toString() + " proposed by " + count + " students!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Examen: " + events.get(0).getData().toString() + " propus de " + count + " studenti!", Toast.LENGTH_SHORT).show();
 
                     }
             }
                 else {
 
-                Toast.makeText(context, "No events on this day ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Nu sunt evenimente in aceasta zi! ", Toast.LENGTH_SHORT).show();
             }
 
         }
@@ -165,7 +165,7 @@ public class ExamsCheckingActivity extends AppCompatActivity  {
                             for(AgendaExam exam : allExams) {
                                 if(exam.getSet()){
                                     Log.d(TAG, "EXAM DATE SHOW " + exam.getDate().getTime());
-                                    Event event = new Event(Color.GREEN, exam.getDate().getTime(), exam.getCourse() + " with " +exam.getProfessor());
+                                    Event event = new Event(Color.GREEN, exam.getDate().getTime(), exam.getCourse() + " cu " +exam.getProfessor());
                                     compactCalendarView.addEvent(event);
                                 }
 
@@ -210,7 +210,7 @@ public class ExamsCheckingActivity extends AppCompatActivity  {
                                          ProposedDays prop = doc.toObject(ProposedDays.class);
                                          propDays.add(prop);
                                          Log.d(TAG, "EXAM PROPOSED DATE SHOW " + prop.getDate().getTime());
-                                         Event event = new Event(Color.RED, prop.getDate().getTime(), selectedExam.getCourse() + " with " + selectedExam.getProfessor());
+                                         Event event = new Event(Color.RED, prop.getDate().getTime(), selectedExam.getCourse() + " cu " + selectedExam.getProfessor());
 
                                          compactCalendarView.addEvent(event);
                                      }
@@ -227,7 +227,7 @@ public class ExamsCheckingActivity extends AppCompatActivity  {
                          });
              }
              else {
-//                 Toast.makeText(, "Nu sunt examene ramase pentru propuneri", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, " no exams left");
              }
 
 

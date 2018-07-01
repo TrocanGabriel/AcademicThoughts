@@ -153,10 +153,10 @@ public class ProfessorMarkListAdapter extends RecyclerView.Adapter<ProfessorMark
                                                                 notifyDataSetChanged();
 
                                                             } else {
-                                                                Toast.makeText(context, "Grades should be between 1 and 10", Toast.LENGTH_SHORT).show();
+                                                                Toast.makeText(context, "Notele trebuie sa fie intre 1 si 10", Toast.LENGTH_SHORT).show();
                                                             }
                                                         } else {
-                                                            Toast.makeText(context, "Grades should be between 1 and 10", Toast.LENGTH_SHORT).show();
+                                                            Toast.makeText(context, "Notele trebuie sa fie intre 1 si 10", Toast.LENGTH_SHORT).show();
 
                                                         }
                                                     }
@@ -182,8 +182,9 @@ public class ProfessorMarkListAdapter extends RecyclerView.Adapter<ProfessorMark
                                 db.collection("professors")
                                         .document(currentUser.getEmail())
                                         .collection("myStudents")
-                                        .document(modifiedData.getEmail())
-                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                        .document(modifiedData.getUid())
+                                        .get()
+                                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
 
@@ -197,7 +198,7 @@ public class ProfessorMarkListAdapter extends RecyclerView.Adapter<ProfessorMark
                                         try {
                                             itemView.getContext().startActivity(Intent.createChooser(i, "Send mail..."));
                                         } catch (android.content.ActivityNotFoundException ex) {
-                                            Toast.makeText(finalContext, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(finalContext, "Nu exista client de email instalat!", Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 });

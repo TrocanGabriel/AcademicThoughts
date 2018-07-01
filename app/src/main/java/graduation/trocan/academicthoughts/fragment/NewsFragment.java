@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -87,31 +88,6 @@ public class NewsFragment extends Fragment {
         if(userRole.equals("student")) {
             floatingActionButton.setVisibility(View.GONE);
         }
-//        db.collection("roles").document(currentUser.getEmail())
-//                .get()
-//                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                        if (task.isSuccessful()) {
-//                            DocumentSnapshot document = task.getResult();
-//                            if (document.exists()) {
-//                                Context context = getActivity();
-//                              if(document.getString("role").equals("student")) {
-//                                  saveFavorites(context, "student");
-//                              }
-//                              else {
-//                                  saveFavorites(context, "professor");
-//
-//                              }
-//                                Log.d(TAG, document.getString("role") + "role " );
-//                            } else {
-//                                Log.d(TAG, "No such document");
-//                            }
-//                        } else {
-//                            Log.d(TAG, "get failed with ", task.getException());
-//                        }
-//                    }
-//                });
             if(floatingActionButton.getVisibility() != View.GONE) {
                 Context contextRole = getActivity();
                 floatingActionButton.setOnClickListener(new View.OnClickListener() {
@@ -142,7 +118,7 @@ public class NewsFragment extends Fragment {
                                                             targetGroups.add(checkBox.getText());
                                                         }
                                                 }
-                                                if (!newData.equals("")) {
+                                                if (!newData.equals("") && targetGroups.size() != 0) {
                                                     Date date = new Date();
                                                     DocumentReference newsRef = db.collection("news").document();
                                                     Log.d(TAG, "NEWS FRAG TARGET" + targetGroups + "SELECTED " + currentSelectedItems );
@@ -156,6 +132,8 @@ public class NewsFragment extends Fragment {
 
                                                     mAdapter.clear();
                                                     retrieveNews(context);
+                                                } else {
+                                                    Toast.makeText(context, "Grupe neselectate sau camp de text gol!", Toast.LENGTH_SHORT).show();
                                                 }
                                             }
                                         })

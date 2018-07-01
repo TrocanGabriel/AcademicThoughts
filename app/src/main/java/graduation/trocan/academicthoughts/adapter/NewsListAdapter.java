@@ -212,7 +212,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
                                         try {
                                             itemView.getContext().startActivity(Intent.createChooser(i, "Send mail..."));
                                         } catch (android.content.ActivityNotFoundException ex) {
-                                            Toast.makeText(finalContext, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(finalContext, "Nu exista client de email instalat!", Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 });

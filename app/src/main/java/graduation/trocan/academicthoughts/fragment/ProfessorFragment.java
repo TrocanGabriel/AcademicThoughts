@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -156,9 +157,13 @@ public class ProfessorFragment extends Fragment {
                                                     recyclerView.setItemAnimator(new DefaultItemAnimator());
                                                     recyclerView.setAdapter(mAdapter);
 
+                                                } else {
+                                                    Toast.makeText(context, "Textul cautat lipseste !", Toast.LENGTH_SHORT).show();
                                                 }
 
 
+                                            } else {
+                                                Toast.makeText(context, "Nu au fost selectate criterii!", Toast.LENGTH_SHORT).show();
                                             }
 
 

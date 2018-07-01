@@ -117,7 +117,7 @@ public class NewsChatActivity extends AppCompatActivity {
             editText.setText("");
         }
         else {
-            Toast.makeText(getApplicationContext(), "Please enter a message!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Te rog introduce un mesaj valid!", Toast.LENGTH_SHORT).show();
         }
 
     }
